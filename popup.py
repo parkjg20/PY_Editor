@@ -21,5 +21,7 @@ class StylePopup():
         Button(self.win, text='OK', command=self.destroy).pack()
 
     def destroy(self):
+        # root의 onChildDestory(인자로 설정 값을)
+        
         self.root.removeChildWindow(self)
         self.win.destroy()

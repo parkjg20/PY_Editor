@@ -200,6 +200,9 @@ class TextEditor():
     def removeChildWindow(self, child):
         self.__childWindows.remove(child)
         
+        
+    # TODO: onChildDestory(인자) 구현 필요 
+    # def drawWithNewProperties()
 root = Tk()
 root.geometry('800x600')
 editor = TextEditor(root)
