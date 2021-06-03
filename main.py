@@ -3,7 +3,6 @@ from tkinter import *
 from tkinter import filedialog, messagebox
 from popup import StylePopup
 
-# 앱 클래스
 class TextEditor():
     '''텍스트 편집기'''
     def __init__(self, root):
