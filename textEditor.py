@@ -201,7 +201,7 @@ class TextEditor():
         x = self.root.winfo_x() + self.root.winfo_width()
         y = self.root.winfo_y()
 
-        popup = SearchPopup(self, x, y)
+        popup = SearchPopup(self, self.style, x, y)
 
 
     def on_child_popup_closed(self, popup, options=None):

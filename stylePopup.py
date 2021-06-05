@@ -8,7 +8,7 @@ from tkinter import colorchooser
 class StylePopup():
     '''스타일 설정 팝업'''
 
-    def __init__(self, parent, x=0, y=0):
+    def __init__(self, parent,style,  x=0, y=0):
         self.parent = parent
         self.frame = Toplevel()
 
@@ -23,6 +23,7 @@ class StylePopup():
     # create child framedow
         lbFont = Label(frame, text='글꼴', width=10)
         lbFontStyle = Label(frame, text='글꼴 스타일')
+        lbFontWeight = Label(frame, text='글꼴 굵게')
         lbFontSize = Label(frame, text='크기')
         lbFgColor = Label(frame, text='글자 색상')
         inFgColorSelected = Entry(frame, width=13)
@@ -31,11 +32,12 @@ class StylePopup():
         
         lbFont.grid(row=0, column=0)
         lbFontStyle.grid(row=1, column=0)
-        lbFontSize.grid(row=2, column=0)
-        lbFgColor.grid(row=3, column=0)
-        inFgColorSelected.grid(row=3, column=1)
-        lbBgColor.grid(row=4, column=0)
-        inBgColorSelected.grid(row=4, column=1)
+        lbFontWeight.grid(row=2, column=0)
+        lbFontSize.grid(row=3, column=0)
+        lbFgColor.grid(row=4, column=0)
+        inFgColorSelected.grid(row=4, column=1)
+        lbBgColor.grid(row=5, column=0)
+        inBgColorSelected.grid(row=5, column=1)
 
         # 글꼴 선택 Combobox
         cbFont = ttk.Combobox(frame, values=[
@@ -47,11 +49,14 @@ class StylePopup():
         # 글꼴 스타일 선택 Combobox
         cbFontStyle = ttk.Combobox(frame, values=[
                                         "italic",
-                                        "bold",
                                         "underline"
                                         # plain is NULL 
                                         ], width=10)
         cbFontStyle.current()
+
+        cboxChecked = 0
+        # 글꼴 굵기 여부 선택 Checkbox
+        cboxFontWeight = Checkbutton(frame, text='체크',variable=cboxChecked, onvalue=1, offvalue=0)
 
         # 글자 크기 선택 Combobox
         cbFontSize = ttk.Combobox(frame, values=[
@@ -71,9 +76,10 @@ class StylePopup():
         # 위치 지정
         cbFont.grid(row=0, column=1)
         cbFontStyle.grid(row=1, column=1)
-        cbFontSize.grid(row=2, column=1)
-        fgColorBtn.grid(row=3, column=2)
-        bgColorBtn.grid(row=4, column=2)
+        cboxFontWeight.grid(row=2, column=1)
+        cbFontSize.grid(row=3, column=1)
+        fgColorBtn.grid(row=4, column=2)
+        bgColorBtn.grid(row=5, column=2)
 
         self.cbFont = cbFont
         self.cbFontStyle = cbFontStyle
@@ -83,8 +89,8 @@ class StylePopup():
 
         trueBtn = Button(frame, text='확인', command=self.onApply)
         falseBtn = Button(frame, text='취소', command=self.onCancel)
-        trueBtn.grid(row=5, column=0)
-        falseBtn.grid(row=5, column=1)
+        trueBtn.grid(row=6, column=0)
+        falseBtn.grid(row=6, column=1)
         
 
     def onCancel(self):
@@ -96,9 +102,10 @@ class StylePopup():
         options = dict({
             "font": self.cbFont.get().strip(),
             "fontStyle": self.cbFontStyle.get().strip(),
+            "fontWeight": 'normal',
             "fontSize": self.cbFontSize.get().strip(),
-            "fgColor": self.inFgColorSelected.get().strip,
-            "bgColor": self.inBgColorSelected.get().strip
+            "fgColor": self.inFgColorSelected.get().strip(),
+            "bgColor": self.inBgColorSelected.get().strip()
         })
 
         self.parent.on_child_popup_closed(self, options)
