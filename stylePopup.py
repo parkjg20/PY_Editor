@@ -8,12 +8,12 @@ from tkinter import colorchooser
 class StylePopup():
     '''스타일 설정 팝업'''
 
-    def __init__(self, parent):
+    def __init__(self, parent, x=0, y=0):
         self.parent = parent
         self.frame = Toplevel()
-        
+
         TITLE = "스타일 설정, P.Y Editor 1.0"
-        self.frame.geometry('300x200')
+        self.frame.geometry('{}x{}+{}+{}'.format(400, 300, x, y))
         
         self.frame.title(TITLE)
         
@@ -89,6 +89,7 @@ class StylePopup():
 
     def onCancel(self):
         self.parent.on_child_popup_closed(self)
+        self.frame.destroy()
 
     def onApply(self):
         print("Destroy", self)
@@ -99,7 +100,7 @@ class StylePopup():
             "fgColor": self.inFgColorSelected.get().strip,
             "bgColor": self.inBgColorSelected.get().strip
         })
-        
+
         self.parent.on_child_popup_closed(self, options)
         self.frame.destroy()
 

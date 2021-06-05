@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+import os
 from tkinter import *
 from tkinter import filedialog, messagebox
-from popup import StylePopup
+from tkinter.font import Font
+from stylePopup import StylePopup
+from searchPopup import SearchPopup
 
 class TextEditor():
     '''텍스트 편집기'''
@@ -26,7 +29,6 @@ class TextEditor():
         self.root.protocol("WM_DELETE_WINDOW", self.file_quit)
         self.make_menu()
         self.bind_events()
-        self.display_font_popup()
 
 
     def make_menu(self):
@@ -55,6 +57,7 @@ class TextEditor():
         self.menubar.add_cascade(label="Fonts", menu=fmenu)
 
         self.root.config(menu=self.menubar)
+        self.setStyles()
         
     def save_if_modified(self):
         if self.editor.edit_modified():
@@ -178,6 +181,10 @@ class TextEditor():
         self.editor.bind("<Control-O>", self.file_open)
         self.editor.bind("<Control-s>", self.file_save)
         self.editor.bind("<Control-S>", self.file_save)
+        
+        self.editor.bind("<Control-f>", self.display_search_popup)
+        self.editor.bind("<Control-F>", self.display_search_popup)
+
         self.editor.bind("<Control-y>", self.redo)
         self.editor.bind("<Control-Y>", self.redo)
         self.editor.bind("<Control-z>", self.undo)
@@ -185,15 +192,44 @@ class TextEditor():
     
     # StylePopup 생성
     def display_font_popup(self):
-        popup = StylePopup(self)
+        x = self.root.winfo_x()
+        y = self.root.winfo_y()
+
+        popup = StylePopup(self, x, y)
+
+    def display_search_popup(self, event=None):
+        x = self.root.winfo_x() + self.root.winfo_width()
+        y = self.root.winfo_y()
+
+        popup = SearchPopup(self, x, y)
+
 
     def on_child_popup_closed(self, popup, options=None):
-        print(popup, options)
-        if options is None:
-            pass
-        else:
-            pass
+        if type(popup) is StylePopup:
+            
+            self.setStyles(
+                options['font'],
+                options['fontSize'],
+                options['fontWeight'],
+                options['fontStyle'],
+                options['fgColor'],
+                options['bgColor']
+            )
             # 속성 변경
+        elif type(popup) is SearchPopup:
+            print('search')
+            pass
 
-    def setStyles(self, font='Gothic', font_size=15, color='black', bg_color='white'):
+    def setStyles(self, font='Gothic', font_size=16, font_weight = "normal", font_style='roman', color='black', bg_color='white'):
+        
+        fontObject = Font(
+            family = font, 
+            size = font_size,
+            weight = font_weight,
+            slant = font_style
+        )
+        
+        self.editor.configure(font=fontObject)
+        self.editor.config(fg=color, bg=bg_color)
+
         pass
