@@ -21,6 +21,9 @@ class TextEditor():
         
         self.editor.pack(side="left", fill="both", expand=1)
         self.editor.config(wrap="word", undo=True, width=80)
+
+        self.editor.configure(bg="white", fg="black", font=("Gothic", 15, ""))
+
         self.editor.focus()
         frame.pack(fill="both", expand=1)
         
