@@ -26,6 +26,7 @@ class TextEditor():
         self.root.protocol("WM_DELETE_WINDOW", self.file_quit)
         self.make_menu()
         self.bind_events()
+        self.display_font_popup()
 
 
     def make_menu(self):
@@ -196,4 +197,3 @@ class TextEditor():
 
     def setStyles(self, font='Gothic', font_size=15, color='black', bg_color='white'):
         pass
-        
