@@ -208,12 +208,12 @@ class TextEditor():
         if type(popup) is StylePopup:
             
             self.setStyles(
-                options['font'],
-                options['fontSize'],
-                options['fontWeight'],
-                options['fontStyle'],
-                options['fgColor'],
-                options['bgColor']
+                options.get('font'),
+                options.get('fontSize'),
+                options.get('fontWeight'),
+                options.get('fontStyle'),
+                options.get('fgColor'),
+                options.get('bgColor')
             )
             # 속성 변경
         elif type(popup) is SearchPopup:
