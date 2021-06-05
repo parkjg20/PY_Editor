@@ -228,7 +228,7 @@ class TextEditor():
         x = self.root.winfo_x()
         y = self.root.winfo_y()
 
-        popup = StylePopup(self, x, y)
+        popup = StylePopup(self, self.style,  x, y)
 
     def display_search_popup(self, event=None):
         x = self.root.winfo_x() + self.root.winfo_width()
@@ -239,7 +239,7 @@ class TextEditor():
 
     def on_child_popup_closed(self, popup, options=None):
         if (type(popup) is StylePopup) and options is not None:
-            self.options = options
+            self.style = options
 
             self.setStyles()
             # 속성 변경
@@ -248,7 +248,7 @@ class TextEditor():
             pass
 
     def setStyles(self):
-        
+
         fontObject = Font(
             family = self.style.get('font'), 
             size = self.style.get('fontSize'),
@@ -257,19 +257,26 @@ class TextEditor():
         )
         
         self.editor.configure(font=fontObject)
-        self.editor.config(fg=self.style.get('fgColor'), bg=self.style.get('bg_color'))
+        self.editor.config(fg=self.style.get('fgColor'), bg=self.style.get('bgColor'))
     
     def saveProperties(self):
         props = {
             'style': self.style
         }
 
-        with open(PROP_FILE_PATH, 'w') as outfile:
-            json.dumps(props, outfile, indent=4)
+        try:
+            with open(PROP_FILE_PATH, 'w') as outfile:
+                json.dumps(props, outfile, indent=4)
+        except FileNotFoundError as err:
+            print(err)
 
     def loadProperties(self):
         properties = None
-        with open(PROP_FILE_PATH, 'r') as readfile:
-            properties = json.load(readfile)
+        
+        try:
+            with open(PROP_FILE_PATH, 'r') as readfile:
+                properties = json.load(readfile)
+        except FileNotFoundError as err:
+            print(err)
 
         return properties
