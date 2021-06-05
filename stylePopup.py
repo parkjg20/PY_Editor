@@ -115,7 +115,7 @@ class StylePopup():
             "font": self.cbFont.get().strip(),
             "fontStyle": self.cbFontStyle.get().strip(),
             "fontWeight": 'bold' if ( self.checked.get() == 1 ) else 'normal' ,
-            "fontSize": self.cbFontSize.get().strip(),
+            "fontSize": int(self.cbFontSize.get().strip()),
             "fgColor": self.inFgColorSelected.get().strip(),
             "bgColor": self.inBgColorSelected.get().strip()
         })

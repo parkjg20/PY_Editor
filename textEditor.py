@@ -61,7 +61,9 @@ class TextEditor():
 
         self.root.config(menu=self.menubar)
 
-        self.style = self.loadProperties()
+        properties = self.loadProperties()
+        self.style = properties.get('style')
+
         if self.style is None:
             self.style = {
                 'font': 'Gothic',
@@ -248,7 +250,6 @@ class TextEditor():
             pass
 
     def setStyles(self):
-
         fontObject = Font(
             family = self.style.get('font'), 
             size = self.style.get('fontSize'),
@@ -266,7 +267,7 @@ class TextEditor():
 
         try:
             with open(PROP_FILE_PATH, 'w') as outfile:
-                json.dumps(props, outfile, indent=4)
+                json.dump(props, outfile, indent=4)
         except FileNotFoundError as err:
             print(err)
 
@@ -274,8 +275,15 @@ class TextEditor():
         properties = None
         
         try:
-            with open(PROP_FILE_PATH, 'r') as readfile:
-                properties = json.load(readfile)
+            with open(PROP_FILE_PATH, 'r', encoding='utf8') as readfile:
+                
+                file = ''
+                for line in readfile:
+                    file += line
+
+                if len(file) > 0:
+                    print(file)
+                    properties = json.loads(s=file)
         except FileNotFoundError as err:
             print(err)
 
