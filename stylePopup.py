@@ -13,7 +13,7 @@ class StylePopup():
         self.frame = Toplevel()
 
         TITLE = "스타일 설정, P.Y Editor 1.0"
-        self.frame.geometry('{}x{}+{}+{}'.format(400, 300, x, y))
+        self.frame.geometry('{}x{}+{}+{}'.format(270, 200, x, y))
         
         self.frame.title(TITLE)
         
@@ -70,14 +70,7 @@ class StylePopup():
         cboxFontWeight = Checkbutton(frame, text='체크',variable=self.checked, onvalue=1, offvalue=0)
 
         # 글자 크기 선택 Combobox
-        cbFontSize = ttk.Combobox(frame, values=[
-                                        9,
-                                        10,
-                                        11,
-                                        12,
-                                        15,
-                                        16,
-                                        20], width=10)
+        cbFontSize = ttk.Combobox(frame, values=[ 9, 10, 11, 12, 15, 16, 20], width=10)
         cbFontSize.current(4)
         
         # 색상표 호출
@@ -129,6 +122,7 @@ class StylePopup():
         color_code = colorchooser.askcolor(title ="색상 선택")
         self.inFgColorSelected.delete(0, 'end')
         self.inFgColorSelected.insert(0, color_code[1])
+        # self.inFgColorSelected.bg(color_code[1])
         print(color_code[1])
         self.frame.lift()
 
