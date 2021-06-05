@@ -57,6 +57,16 @@ class TextEditor():
         self.menubar.add_cascade(label="Fonts", menu=fmenu)
 
         self.root.config(menu=self.menubar)
+
+        self.style = {
+            'font': 'Gothic',
+            'fontWeight': 'normal',
+            'fontStyle': 'roman',
+            'fontSize': 16,
+            'fgColor': 'black',
+            'bgColor': 'white'
+        }
+
         self.setStyles()
         
     def save_if_modified(self):
@@ -205,31 +215,25 @@ class TextEditor():
 
 
     def on_child_popup_closed(self, popup, options=None):
-        if type(popup) is StylePopup:
-            
-            self.setStyles(
-                options.get('font'),
-                options.get('fontSize'),
-                options.get('fontWeight'),
-                options.get('fontStyle'),
-                options.get('fgColor'),
-                options.get('bgColor')
-            )
+        if (type(popup) is StylePopup) and options is not None:
+            self.options = options
+
+            self.setStyles()
             # 속성 변경
         elif type(popup) is SearchPopup:
             print('search')
             pass
 
-    def setStyles(self, font='Gothic', font_size=16, font_weight = "normal", font_style='roman', color='black', bg_color='white'):
+    def setStyles(self):
         
         fontObject = Font(
-            family = font, 
-            size = font_size,
-            weight = font_weight,
-            slant = font_style
+            family = self.style.get('font'), 
+            size = self.style.get('fontSize'),
+            weight = self.style.get('fontWeight'),
+            slant = self.style.get('fontStyle')
         )
         
         self.editor.configure(font=fontObject)
-        self.editor.config(fg=color, bg=bg_color)
+        self.editor.config(fg=self.style.get('fgColor'), bg=self.style.get('bg_color'))
 
         pass
