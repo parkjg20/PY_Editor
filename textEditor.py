@@ -212,7 +212,7 @@ class TextEditor():
             print('search')
             pass
 
-    def setStyles(self, font='Gothic', font_size=20, font_weight = "normal", font_style='roman', color='black', bg_color='white'):
+    def setStyles(self, font='Gothic', font_size=16, font_weight = "normal", font_style='roman', color='black', bg_color='white'):
         
         fontObject = Font(
             family = font, 
@@ -222,6 +222,6 @@ class TextEditor():
         )
         
         self.editor.configure(font=fontObject)
-        # self.editor.config(color=color, background=bg_color)
+        self.editor.config(fg=color, bg=bg_color)
 
         pass
