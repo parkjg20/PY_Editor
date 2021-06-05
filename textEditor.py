@@ -186,11 +186,14 @@ class TextEditor():
     def display_font_popup(self):
         popup = StylePopup(self)
 
-    def on_child_popup_closed(self, popup):
-        print(popup)
+    def on_child_popup_closed(self, popup, options=None):
+        print(popup, options)
+        if options is None:
+            pass
+        else:
+            pass
+            # 속성 변경
 
     def setStyles(self, font='Gothic', font_size=15, color='black', bg_color='white'):
+        pass
         
-        
-        
-    
