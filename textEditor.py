@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
+import json
 from tkinter import *
 from tkinter import filedialog, messagebox
 from tkinter.font import Font
 from stylePopup import StylePopup
 from searchPopup import SearchPopup
+
+PROP_FILE_PATH = 'settings.json'
 
 class TextEditor():
     '''텍스트 편집기'''
@@ -48,7 +51,7 @@ class TextEditor():
         self.menubar.add_cascade(label="Edit", menu=emenu)
 
         hmenu = Menu(self.menubar, tearoff=0)
-        hmenu.add_command(label="TkEditor 편집기", command=self.help_showabout)
+        hmenu.add_command(label="P.Y Editor", command=self.help_showabout)
         self.menubar.add_cascade(label="Help", menu=hmenu)
         
         # 폰트 설정 메뉴 추가
@@ -58,14 +61,18 @@ class TextEditor():
 
         self.root.config(menu=self.menubar)
 
-        self.style = {
-            'font': 'Gothic',
-            'fontWeight': 'normal',
-            'fontStyle': 'roman',
-            'fontSize': 16,
-            'fgColor': 'black',
-            'bgColor': 'white'
-        }
+        properties = self.loadProperties()
+        self.style = properties.get('style')
+
+        if self.style is None:
+            self.style = {
+                'font': 'Gothic',
+                'fontWeight': 'normal',
+                'fontStyle': 'roman',
+                'fontSize': 16,
+                'fgColor': 'black',
+                'bgColor': 'white'
+            }
 
         self.setStyles()
         
@@ -156,6 +163,10 @@ class TextEditor():
 
     def file_quit(self, event=None):
         '''종료 버튼이나 메뉴 Exit를 클릭하면 실행'''
+        
+        # 스타일 설정 정보 저장
+        self.saveProperties()
+
         result = self.save_if_modified()
         
         if result != None:
@@ -171,7 +182,21 @@ class TextEditor():
         self.editor.event_generate("<<Paste>>")
         
     def help_showabout(self, event=None):
-        messagebox.showinfo('TkInter 편집기', 'TkInter 편집기 버전 0.1')
+        helpText = 'P.Y Editor 1.0\n\n'
+        helpText += '지원 기능\n'
+        helpText += '- 글꼴 선택\n'
+        helpText += '- 굵기 선택\n'
+        helpText += '- 스타일 설정\n'
+        helpText += '- 글씨 크기 설정\n'
+        helpText += '- 글꼴 색상 선택\n'
+        helpText += '- 배경색 선택\n' 
+        helpText += '- 텍스트 검색\n\n'
+
+        helpText += 'P.Y Editor Made by\n' 
+        helpText += '- Park Jin Guk\n'
+        helpText += '- Yoo Seung Wan\n'
+
+        messagebox.showinfo('P.Y Editor', helpText)
 
     def set_title(self, event=None):
         if self.file_path != None:
@@ -225,7 +250,6 @@ class TextEditor():
             pass
 
     def setStyles(self):
-
         fontObject = Font(
             family = self.style.get('font'), 
             size = self.style.get('fontSize'),
@@ -235,3 +259,32 @@ class TextEditor():
         
         self.editor.configure(font=fontObject)
         self.editor.config(fg=self.style.get('fgColor'), bg=self.style.get('bgColor'))
+    
+    def saveProperties(self):
+        props = {
+            'style': self.style
+        }
+
+        try:
+            with open(PROP_FILE_PATH, 'w') as outfile:
+                json.dump(props, outfile, indent=4)
+        except FileNotFoundError as err:
+            print(err)
+
+    def loadProperties(self):
+        properties = None
+        
+        try:
+            with open(PROP_FILE_PATH, 'r', encoding='utf8') as readfile:
+                
+                file = ''
+                for line in readfile:
+                    file += line
+
+                if len(file) > 0:
+                    print(file)
+                    properties = json.loads(s=file)
+        except FileNotFoundError as err:
+            print(err)
+
+        return properties
