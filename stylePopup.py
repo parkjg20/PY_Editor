@@ -51,7 +51,7 @@ class StylePopup():
                 break
 
         cbFont = ttk.Combobox(frame, values=fontList, width=10)
-        cbFont.current(0)
+        cbFont.current(currentFont)
 
         # 글꼴 스타일 선택 Combobox
         currentStyle = 0
@@ -64,14 +64,29 @@ class StylePopup():
         cbFontStyle = ttk.Combobox(frame, values=styleList, width=10)
         cbFontStyle.current(currentStyle)
 
-        # checked = 0
-        self.checked = IntVar()
         # 글꼴 굵기 여부 선택 Checkbox
+        self.checked = 0
+        # self.checked = None
+        fontWeightList = ["normal", "bold"]
+        for fontWeight in enumerate(fontWeightList):
+            if(fontWeight[1] == style.get('fontWeight')):
+                self.checked = fontWeight[0]
+                break
+        
+        print(self.checked)
+
         cboxFontWeight = Checkbutton(frame, text='체크',variable=self.checked, onvalue=1, offvalue=0)
 
         # 글자 크기 선택 Combobox
-        cbFontSize = ttk.Combobox(frame, values=[ 9, 10, 11, 12, 15, 16, 20], width=10)
-        cbFontSize.current(4)
+        currentFontSize = 0
+        fontSizeList = [10, 11, 12, 13, 14, 15, 16, 20]
+        for fontSize in enumerate(fontSizeList):
+            if(fontSize[1] == style.get('fontSize')):
+                currentFontSize = fontSize[0]
+                break
+
+        cbFontSize = ttk.Combobox(frame, values=fontSizeList, width=10)
+        cbFontSize.current(currentFontSize)
         
         # 색상표 호출
         fgColorBtn = Button(frame, text = "색상 선택", command = self.chooseFgColor)
