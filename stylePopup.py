@@ -2,6 +2,7 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import colorchooser
+import tkinter.font as tkFont
 
 
 # 사용자 편의 기능 2. 폰트 설정 팝업 표시
@@ -44,7 +45,7 @@ class StylePopup():
 
         # 글꼴 선택 Combobox
         currentFont = 0
-        fontList = ["Gothic", "D2Coding", "Courier"]
+        fontList = list(tkFont.families())
         for font in enumerate(fontList):
             if(font[1] == style.get('font')):
                 currentFont = font[0]
