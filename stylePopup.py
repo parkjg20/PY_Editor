@@ -64,18 +64,29 @@ class StylePopup():
         cbFontStyle = ttk.Combobox(frame, values=styleList, width=10)
         cbFontStyle.current(currentStyle)
 
-        # 글꼴 굵기 여부 선택 Checkbox
-        self.checked = 0
-        # self.checked = None
-        fontWeightList = ["normal", "bold"]
-        for fontWeight in enumerate(fontWeightList):
-            if(fontWeight[1] == style.get('fontWeight')):
-                self.checked = fontWeight[0]
-                break
-        
-        print(self.checked)
+        # 글꼴 굵기 여부 선택 Checkbox (수정 예정)
+            # self.checked = 0
+            # # self.checked = None
+            # fontWeightList = ["normal", "bold"]
+            # for fontWeight in enumerate(fontWeightList):
+            #     if(fontWeight[1] == style.get('fontWeight')):
+            #         self.checked = fontWeight[0]
+            #         break
+            
+            # print(self.checked)
 
-        cboxFontWeight = Checkbutton(frame, text='체크',variable=self.checked, onvalue=1, offvalue=0)
+            # cboxFontWeight = Checkbutton(frame, text='체크',variable=self.checked, onvalue=1, offvalue=0)
+
+        # 글꼴 굵기 여부 선택 Combobox
+        currentFontWeight = 0
+        fontweightList = ["normal", "bold"]
+        for fontWeight in enumerate(fontweightList):
+            if(fontWeight[1] == style.get('fontWeight')):
+                currentFontWeight = fontWeight[0]
+                break
+
+        cbFontWeight = ttk.Combobox(frame, values=fontweightList, width=10)
+        cbFontWeight.current(currentFontWeight)
 
         # 글자 크기 선택 Combobox
         currentFontSize = 0
@@ -95,14 +106,16 @@ class StylePopup():
         # 위치 지정
         cbFont.grid(row=0, column=1)
         cbFontStyle.grid(row=1, column=1)
-        cboxFontWeight.grid(row=2, column=1)
+            # cboxFontWeight.grid(row=2, column=1)
+        cbFontWeight.grid(row=2, column=1)
         cbFontSize.grid(row=3, column=1)
         fgColorBtn.grid(row=4, column=2)
         bgColorBtn.grid(row=5, column=2)
 
         self.cbFont = cbFont
         self.cbFontStyle = cbFontStyle
-        self.cboxFontWeight = cboxFontWeight
+            # self.cboxFontWeight = cboxFontWeight
+        self.cbFontWeight = cbFontWeight
         self.cbFontSize = cbFontSize
         self.inFgColorSelected = inFgColorSelected
         self.inBgColorSelected = inBgColorSelected
@@ -122,7 +135,8 @@ class StylePopup():
         options = dict({
             "font": self.cbFont.get().strip(),
             "fontStyle": self.cbFontStyle.get().strip(),
-            "fontWeight": 'bold' if ( self.checked.get() == 1 ) else 'normal' ,
+                # "fontWeight": 'bold' if ( self.checked.get() == 1 ) else 'normal' ,
+            "fontWeight": self.cbFontWeight.get().strip(),
             "fontSize": int(self.cbFontSize.get().strip()),
             "fgColor": self.inFgColorSelected.get().strip(),
             "bgColor": self.inBgColorSelected.get().strip()
