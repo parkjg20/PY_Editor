@@ -104,7 +104,7 @@ class StylePopup():
 
         # 줄 간격 선택 Combobox
         currentLineSpace = 0
-        lineSpaceList = [1, 3, 5, 8, 10, 15, 20]
+        lineSpaceList = [1, 2, 3, 4, 5, 8, 10, 15, 20]
         for lineSpace in enumerate(lineSpaceList):
             if(lineSpace[1] == style.get('lineSpace')):
                 currentLineSpace = lineSpace[0]

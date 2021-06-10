@@ -45,7 +45,6 @@ class TextEditor():
 
 
     def draw_gui(self):
-        
         # vertical scrollbar
         self.yscrollbar = Scrollbar(self.frame, orient="vertical")
         self.yscrollbar.pack(side="right", fill="y")
@@ -54,9 +53,11 @@ class TextEditor():
         self.xscrollbar = Scrollbar(self.frame, orient="horizontal")
         self.xscrollbar.pack(side="bottom", fill="x")
 
+        # line counter
         self.linenumbers = TextLineNumbers(self.frame, width=30, relief='sunken', borderwidth=1)
         self.linenumbers.pack(side="left", fill="both", expand=1)
         
+
         self.editor = Text(self.frame, yscrollcommand=self.yscrollbar.set, wrap="none", xscrollcommand=self.xscrollbar.set)
         self.editor.pack(side="left", fill="both", expand=1)
         self.editor.config(undo=True, width=80)
@@ -105,10 +106,6 @@ class TextEditor():
         emenu.add_command(label="Copy", command=self.edit_copy)
         emenu.add_command(label="Paste", command=self.edit_paste)
         self.menubar.add_cascade(label="Edit", menu=emenu)
-
-        hmenu = Menu(self.menubar, tearoff=0)
-        hmenu.add_command(label="P.Y Editor", command=self.help_showabout)
-        self.menubar.add_cascade(label="Help", menu=hmenu)
         
         # 폰트 설정 메뉴 추가
         fmenu = Menu(self.menubar, tearoff=0)
@@ -124,8 +121,11 @@ class TextEditor():
         
         self.fileExplorerEnable = fileExplorerEnable
         dmenu.add_checkbutton(label="File Explorer", variable=self.fileExplorerEnable, onvalue=1, offvalue=0, command=(lambda: self.changeShowView()))
-
         self.menubar.add_cascade(label="Show View", menu=dmenu)
+
+        hmenu = Menu(self.menubar, tearoff=0)
+        hmenu.add_command(label="P.Y Editor", command=self.help_showabout)
+        self.menubar.add_cascade(label="Help", menu=hmenu)
 
         self.root.config(menu=self.menubar)
         
@@ -351,7 +351,7 @@ class TextEditor():
             slant = self.style.get('fontStyle'),
         )
         
-        self.editor.configure(font=fontObject, insertbackground=self.style.get('fgColor'))
+        self.editor.configure(font=fontObject, insertbackground=self.style.get('fgColor')) # cursor색상 == font색상
         self.editor.config(fg=self.style.get('fgColor'), bg=self.style.get('bgColor'), spacing3=self.style.get('lineSpace'))
         self._on_change(event=None)
 
