@@ -66,7 +66,9 @@ class TextEditor():
         self.root.config(menu=self.menubar)
 
         properties = self.loadProperties()
-        self.style = properties.get('style')
+        self.style = None
+        if properties != None:
+            self.style = properties.get('style')
 
         if self.style is None:
             self.style = {
