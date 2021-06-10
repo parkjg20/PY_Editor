@@ -6,6 +6,8 @@ from tkinter import filedialog, messagebox
 from tkinter.font import Font
 from stylePopup import StylePopup
 from searchPopup import SearchPopup
+from os import listdir, replace, sep
+from os.path import isfile, join
 
 PROP_FILE_PATH = 'settings.json'
 
@@ -14,25 +16,52 @@ class TextEditor():
     def __init__(self, root):
         self.root = root
         self.TITLE = "P.Y Editor 1.0"
+        self.current_Dir = "C:/PY_Editor"
         self.file_path = None
         self.set_title()
         
         frame = Frame(self.root)
-        self.yscrollbar = Scrollbar(frame, orient="vertical")
-        self.editor = Text(frame, yscrollcommand=self.yscrollbar.set)
+        frame2 = Frame(self.root)
+
+        
+        self.frame = frame
+        self.frame2 = frame2
+        self.draw_gui()
+        self.draw_file_list()
+        
+
+        frame2.pack(side="left", fill="both", expand=1)
+        frame.pack(side="right", fill="both", expand=1)
+        
+        self.root.protocol("WM_DELETE_WINDOW", self.file_quit)
+        self.make_menu()
+        self.bind_events()
+
+    def draw_gui(self):
+        self.yscrollbar = Scrollbar(self.frame, orient="vertical")
+        self.editor = Text(self.frame, yscrollcommand=self.yscrollbar.set)
         self.yscrollbar.config(command=self.editor.yview)
         self.yscrollbar.pack(side="right", fill="y")
         
         self.editor.pack(side="left", fill="both", expand=1)
         self.editor.config(wrap="word", undo=True, width=80)
         self.editor.focus()
-        self.frame = frame
-        frame.pack(fill="both", expand=1)
-        
-        self.root.protocol("WM_DELETE_WINDOW", self.file_quit)
-        self.make_menu()
-        self.bind_events()
 
+    def draw_file_list(self):
+        fileExplorer = Frame(self.frame2, width=150)
+        # fileExplorer.pack(side="left", fill='both', expand=1)
+        fileExplorer.grid(row=0, column=0)
+        onlyFiles = [f for f in listdir(self.current_Dir) if isfile(join(self.current_Dir, f))]
+        for i, fileName in enumerate(onlyFiles):
+            lb = Label(self.frame2, text=fileName)
+            realPath = join(self.current_Dir, fileName).replace("\\", "/")
+            print(i, realPath, self.file_path)
+            
+            if(self.file_path != None):
+                if realPath.lower() == self.file_path.lower():
+                    lb.configure(bg="red")
+                    print(i, "일치 !")
+            lb.grid(row=i, column=0, sticky=W)
 
     def make_menu(self):
         self.menubar = Menu(self.root)
@@ -58,6 +87,10 @@ class TextEditor():
         fmenu = Menu(self.menubar, tearoff=0)
         fmenu.add_command(label="글꼴", command=self.display_font_popup)
         self.menubar.add_cascade(label="Fonts", menu=fmenu)
+
+        dmenu = Menu(self.menubar, tearoff = 0)
+        dmenu.add_checkbutton(label="File Explorer")
+        self.menubar.add_cascade(label="Show View", menu=dmenu)
 
         self.root.config(menu=self.menubar)
 
@@ -121,6 +154,7 @@ class TextEditor():
                 self.editor.edit_modified(False)
                 self.file_path = filepath
                 print('파일 읽기 완료!'.center(30, '*'))
+                
             
         result = self.save_if_modified()
         if result != None:
@@ -129,6 +163,7 @@ class TextEditor():
             if filepath != None and filepath != '':
                 readfile(filepath)
                 self.set_title()
+                self.draw_file_list()
                 
     def file_save(self, event=None):
         if self.file_path == None:

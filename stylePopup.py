@@ -75,7 +75,6 @@ class StylePopup():
             #         break
             
             # print(self.checked)
-
             # cboxFontWeight = Checkbutton(frame, text='체크',variable=self.checked, onvalue=1, offvalue=0)
 
         # 글꼴 굵기 여부 선택 Combobox
@@ -149,16 +148,15 @@ class StylePopup():
 
     def chooseFgColor(self):
         # variable to store hexadecimal code of color
-        color_code = colorchooser.askcolor(title ="색상 선택")
+        color_code = colorchooser.askcolor(title ="글자 색상 선택")
         self.inFgColorSelected.delete(0, 'end')
         self.inFgColorSelected.insert(0, color_code[1])
-        # self.inFgColorSelected.bg(color_code[1])
         print(color_code[1])
         self.frame.lift()
 
     def chooseBgColor(self):
         # variable to store hexadecimal code of color
-        color_code = colorchooser.askcolor(title ="색상 선택")
+        color_code = colorchooser.askcolor(title ="배경 색상 선택")
         self.inBgColorSelected.delete(0, 'end')
         self.inBgColorSelected.insert(0, color_code[1])
         print(color_code[1])
