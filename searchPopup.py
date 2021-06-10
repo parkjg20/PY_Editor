@@ -17,7 +17,16 @@ class SearchPopup():
         self.createGUI(self.frame)
     
     def createGUI(self, frame):
-        pass        
+        lbKeyword = Label(frame, text='검색할 단어 입력')
+        
+        inKeyword = Entry(frame)
+
+        btnSearch = Button(frame, text="검색")
+
+        lbKeyword.grid(row=0, column=0)
+        inKeyword.grid(row=0, column=1)
+        btnSearch.grid(row=0, column=2)
+        
 
     def onCancel(self):
         self.parent.on_child_popup_closed(self)

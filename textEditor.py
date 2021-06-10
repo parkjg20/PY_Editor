@@ -26,10 +26,10 @@ class TextEditor():
         
         self.linenumbers = TextLineNumbers(self.frame, width=30)
         self.linenumbers.attach(self.editor)
-        self.linenumbers.pack(side="left", fill="y")
+        self.linenumbers.pack(side="left", fill="both", expand=1)
 
         self.editor.pack(side="left", fill="both", expand=1)
-        self.editor.config(wrap="word", undo=True, width=80)
+        self.editor.config(wrap="word", undo=True)
         self.editor.focus()
         self.frame.pack(fill="both", expand=1)
         
@@ -222,8 +222,10 @@ class TextEditor():
         self.editor.bind("<<Change>>", self._on_change)
         self.editor.bind("<Configure>", self._on_change)
         
-        self.editor.bind("<KeyRelease-BackSpace>", self._on_change)
-        self.editor.bind("<KeyRelease-Return>", self._on_change)
+        
+        self.editor.bind("<MouseWheel>", self._on_change)
+        self.editor.bind("<KeyRelease>", self._on_change)
+        self.editor.bind("<KeyPress>", self._on_change)
 
         self.editor.bind("<Control-o>", self.file_open)
         self.editor.bind("<Control-O>", self.file_open)
