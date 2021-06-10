@@ -42,7 +42,7 @@ class TextEditor():
         self.yscrollbar.config(command=self.editor.yview)
         self.yscrollbar.pack(side="right", fill="y")
                 
-        self.linenumbers = TextLineNumbers(self.frame, width=30)
+        self.linenumbers = TextLineNumbers(self.frame, width=30, relief='sunken', borderwidth=1)
         self.linenumbers.attach(self.editor)
         self.linenumbers.pack(side="left", fill="both", expand=1)
         
