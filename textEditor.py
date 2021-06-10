@@ -8,6 +8,7 @@ from stylePopup import StylePopup
 from searchPopup import SearchPopup
 from os import listdir, replace, sep
 from os.path import isfile, join
+import copy as copy
 
 PROP_FILE_PATH = 'settings.json'
 
@@ -58,6 +59,8 @@ class TextEditor():
         for i, fileName in enumerate(onlyFiles):
             lb = Label(self.frame2, text=fileName)
             realPath = join(self.current_Dir, fileName).replace("\\", "/")
+            lb.bind("<Button-1>", (lambda e: print(e.getEventObject())))
+            lb.bind("<Double-Button-1>", (lambda e: self.file_open())
             print(i, realPath, self.file_path)
             
             if(self.file_path != None):
