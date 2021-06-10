@@ -16,7 +16,7 @@ class TextEditor():
     def __init__(self, root):
         self.root = root
         self.TITLE = "P.Y Editor 1.0"
-        self.current_Dir = "C:/PY_Editor"
+        self.current_Dir = None
         self.file_path = None
         self.set_title()
         
@@ -28,7 +28,6 @@ class TextEditor():
         self.draw_gui()
         self.draw_file_list()
         
-
         frame2.pack(side="left", fill="both", expand=1)
         frame.pack(side="right", fill="both", expand=1)
         
@@ -54,17 +53,24 @@ class TextEditor():
         fileExplorer = Frame(self.frame2, width=150)
         # fileExplorer.pack(side="left", fill='both', expand=1)
         fileExplorer.grid(row=0, column=0)
-        onlyFiles = [f for f in listdir(self.current_Dir) if isfile(join(self.current_Dir, f))]
-        for i, fileName in enumerate(onlyFiles):
-            lb = Label(self.frame2, text=fileName)
-            realPath = join(self.current_Dir, fileName).replace("\\", "/")
-            print(i, realPath, self.file_path)
-            
-            if(self.file_path != None):
-                if realPath.lower() == self.file_path.lower():
-                    lb.configure(bg="red")
-                    print(i, "일치 !")
-            lb.grid(row=i, column=0, sticky=W)
+
+        
+        if self.current_Dir != None:
+
+            onlyFiles = [f for f in listdir(self.current_Dir) if isfile(join(self.current_Dir, f))]
+            for i, fileName in enumerate(onlyFiles):
+                lb = Label(self.frame2, text=fileName)
+                realPath = join(self.current_Dir, fileName).replace("\\", "/")
+                print(i, realPath, self.file_path)
+                
+                if(self.file_path != None):
+                    if realPath.lower() == self.file_path.lower():
+                        lb.configure(bg="red")
+                        print(i, "일치 !")
+                lb.grid(row=i, column=0, sticky=W)
+        else:
+            openFolder = Button(self.frame2, text="Open Folder")
+            openFolder.grid(row=0, column=0)
 
     def make_menu(self):
         self.menubar = Menu(self.root)
@@ -167,7 +173,33 @@ class TextEditor():
                 readfile(filepath)
                 self.set_title()
                 self.draw_file_list()
+
+    def folder_open(self, event=None, dirPath=None):
+        def readfile(filepath):
+            try:
+                with open(filepath, encoding="utf-8") as f:
+                    fileContents = f.read()
+            except FileNotFoundError as e:
+                print(e)
+                print('파일 읽기 실패!'.center(30, '*'))
+            else:
+                # append strings to editor from file
+                self.editor.delete(1.0, "end")
+                self.editor.insert(1.0, fileContents)
+                self.editor.edit_modified(False)
+                self.file_path = filepath
+                print('파일 읽기 완료!'.center(30, '*'))
                 
+            
+        result = self.save_if_modified()
+        if result != None:
+            if filepath == None:
+                filepath = filedialog.askopenfilename()
+            if filepath != None and filepath != '':
+                readfile(filepath)
+                self.set_title()
+                self.draw_file_list()
+
     def file_save(self, event=None):
         if self.file_path == None:
             result = self.file_save_as()
