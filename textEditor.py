@@ -19,22 +19,30 @@ class TextEditor():
         self.TITLE = "P.Y Editor 1.0"
         self.current_Dir = None
         self.file_path = None
+        self.options = None
+
         self.set_title()
         
         frame = Frame(self.root)
-        frame2 = Frame(self.root)
+        frame2 = Frame(self.root, width=150)
         
         self.frame = frame
         self.frame2 = frame2
-        self.draw_gui()
-        self.draw_file_list()
         
         frame2.pack(side="left", fill="both", expand=1)
         frame.pack(side="right", fill="both", expand=1)
         
         self.root.protocol("WM_DELETE_WINDOW", self.file_quit)
+        
+        self.draw_gui()
+
+        self.loadProperties()
+        
         self.make_menu()
+        
+        self.changeShowView()
         self.bind_events()
+
 
     def draw_gui(self):
         self.yscrollbar = Scrollbar(self.frame, orient="vertical")
@@ -50,11 +58,10 @@ class TextEditor():
         self.editor.config(wrap="word", undo=True, width=80)
         self.editor.focus()
 
-    def draw_file_list(self):
-        fileExplorer = Frame(self.frame2, width=150)
-        # fileExplorer.pack(side="left", fill='both', expand=1)
-        fileExplorer.grid(row=0, column=0)
+    def displayFileExplorer(self):
 
+        for child in self.frame2.winfo_children():
+            child.destroy()
         
         if self.current_Dir != None:
 
@@ -62,25 +69,24 @@ class TextEditor():
             for i, fileName in enumerate(onlyFiles):
                 lb = Label(self.frame2, text=fileName)
                 realPath = join(self.current_Dir, fileName).replace("\\", "/")
-                lb.bind("<Button-1>", (lambda e: print(e.getEventObject())))
-                lb.bind("<Double-Button-1>", (lambda e: self.file_open()))
-                print(i, realPath, self.file_path)
+                lb.bind("<Double-Button-1>", (lambda e: self.file_open(filepath=join(self.current_Dir, e.widget.cget("text")).replace("\\", "/"))))
                 
                 if(self.file_path != None):
                     if realPath.lower() == self.file_path.lower():
                         lb.configure(bg="red")
-                        print(i, "일치 !")
+
                 lb.grid(row=i, column=0, sticky=W)
         else:
-            openFolder = Button(self.frame2, text="Open Folder")
+            openFolder = Button(self.frame2, text="Open Folder", command=self.folder_open)
             openFolder.grid(row=0, column=0)
-       
+        self._on_change(event=None)
 
     def make_menu(self):
         self.menubar = Menu(self.root)
         fmenu = Menu(self.menubar, tearoff=0)
         fmenu.add_command(label="New", command=self.file_new, accelerator="Ctrl+N")
         fmenu.add_command(label="Open...", command=self.file_open, accelerator="Ctrl+O")
+        fmenu.add_command(label="Open Folder...", command=self.folder_open, accelerator="Ctrl+D")
         fmenu.add_command(label="Save", command=self.file_save, accelerator="Ctrl+S")
         fmenu.add_command(label="Save As ...", command=self.file_save_as, accelerator="Ctrl+Alt+S")
         fmenu.add_command(label="Exit", command=self.file_quit, accelerator="Alt+F4")
@@ -102,28 +108,32 @@ class TextEditor():
         self.menubar.add_cascade(label="Fonts", menu=fmenu)
 
         dmenu = Menu(self.menubar, tearoff = 0)
-        dmenu.add_checkbutton(label="File Explorer")
+        
+        fileExplorerEnable = BooleanVar()
+        fileExplorerEnable.set(True)
+        if(self.options.get('showView').get('fileExplorer') != None):
+            fileExplorerEnable.set(self.options.get('showView').get('fileExplorer'))
+        
+        self.fileExplorerEnable = fileExplorerEnable
+        dmenu.add_checkbutton(label="File Explorer", variable=self.fileExplorerEnable, onvalue=1, offvalue=0, command=(lambda: self.changeShowView()))
+
         self.menubar.add_cascade(label="Show View", menu=dmenu)
 
         self.root.config(menu=self.menubar)
-
-        properties = self.loadProperties()
-        self.style = None
-        if properties != None:
-            self.style = properties.get('style')
-
-        if self.style is None:
-            self.style = {
-                'font': 'Gothic',
-                'fontWeight': 'normal',
-                'fontStyle': 'roman',
-                'fontSize': 16,
-                'fgColor': 'black',
-                'bgColor': 'white'
-            }
-
-        self.setStyles()
         
+    def changeShowView(self):
+
+        self.options.get('showView')['fileExplorer'] = self.fileExplorerEnable.get()
+        if(not self.fileExplorerEnable.get()):
+            self.frame2.pack_forget()
+        else:
+            self.frame.pack_forget()
+            
+            self.frame2.pack(side="left", fill="both", expand=1)
+            self.frame.pack(side="right", fill="both", expand=1)
+            self.displayFileExplorer()
+
+
     def save_if_modified(self):
         if self.editor.edit_modified():
             caption = '저장 확인'
@@ -176,33 +186,21 @@ class TextEditor():
             if filepath != None and filepath != '':
                 readfile(filepath)
                 self.set_title()
-                self.draw_file_list()
+                self.displayFileExplorer()
 
     def folder_open(self, event=None, dirPath=None):
-        def readfile(filepath):
-            try:
-                with open(filepath, encoding="utf-8") as f:
-                    fileContents = f.read()
-            except FileNotFoundError as e:
-                print(e)
-                print('파일 읽기 실패!'.center(30, '*'))
-            else:
-                # append strings to editor from file
-                self.editor.delete(1.0, "end")
-                self.editor.insert(1.0, fileContents)
-                self.editor.edit_modified(False)
-                self.file_path = filepath
-                print('파일 읽기 완료!'.center(30, '*'))
-                
-            
         result = self.save_if_modified()
         if result != None:
-            if filepath == None:
-                filepath = filedialog.askopenfilename()
-            if filepath != None and filepath != '':
-                readfile(filepath)
-                self.set_title()
-                self.draw_file_list()
+            if dirPath == None:
+                dirPath = filedialog.askdirectory()
+            
+            self.current_Dir = dirPath
+            try:
+                self.displayFileExplorer()
+            except FileNotFoundError as err:
+                print("폴더 열기 실패")
+                self.current_Dir = None
+                self.displayFileExplorer()
 
     def file_save(self, event=None):
         if self.file_path == None:
@@ -299,6 +297,8 @@ class TextEditor():
 
         self.editor.bind("<Control-o>", self.file_open)
         self.editor.bind("<Control-O>", self.file_open)
+        self.editor.bind("<Control-d>", self.folder_open)
+        self.editor.bind("<Control-D>", self.folder_open)
         self.editor.bind("<Control-s>", self.file_save)
         self.editor.bind("<Control-S>", self.file_save)
         
@@ -335,7 +335,7 @@ class TextEditor():
             pass
 
     def setStyles(self):
-        
+        print(self.style)
         fontObject = Font(
             family = self.style.get('font'), 
             size = self.style.get('fontSize'),
@@ -349,7 +349,8 @@ class TextEditor():
 
     def saveProperties(self):
         props = {
-            'style': self.style
+            'style': self.style,
+            'options': self.options
         }
 
         try:
@@ -373,8 +374,35 @@ class TextEditor():
                     properties = json.loads(s=file)
         except FileNotFoundError as err:
             print(err)
+        else:
+            self.style = None
+            self.options = None
 
-        return properties
+            if properties != None:
+                self.style = properties.get('style')
+                self.options = properties.get('options')
+
+            if self.style is None:
+                self.style = {
+                    'font': 'Gothic',
+                    'fontWeight': 'normal',
+                    'fontStyle': 'roman',
+                    'fontSize': 16,
+                    'fgColor': 'black',
+                    'bgColor': 'white'
+                }
+
+            self.setStyles()
+
+            if self.options is None:
+
+                self.options = {
+                    'showView': {
+                        'fileExplorer': True
+                    }
+                }
+
+            print(self.options)
 
     def _on_change(self, event):
         self.linenumbers.redraw()
@@ -399,3 +427,8 @@ class TextLineNumbers(Canvas):
             linenum = str(i).split(".")[0]
             self.create_text(2,y,anchor="nw", text=linenum)
             i = self.textwidget.index("%s+1line" % i)
+
+    def setShowViewTabs(self):
+        for key in self.options.showView:
+            tab = self.options.showView.get(key)
+            print(tab)
