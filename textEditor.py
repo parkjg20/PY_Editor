@@ -45,18 +45,26 @@ class TextEditor():
 
 
     def draw_gui(self):
+        
+        # vertical scrollbar
         self.yscrollbar = Scrollbar(self.frame, orient="vertical")
-        self.editor = Text(self.frame, yscrollcommand=self.yscrollbar.set)
-        self.yscrollbar.config(command=self.editor.yview)
         self.yscrollbar.pack(side="right", fill="y")
-                
+
+        # horizontal scrollbar
+        self.xscrollbar = Scrollbar(self.frame, orient="horizontal")
+        self.xscrollbar.pack(side="bottom", fill="x")
+
         self.linenumbers = TextLineNumbers(self.frame, width=30, relief='sunken', borderwidth=1)
-        self.linenumbers.attach(self.editor)
         self.linenumbers.pack(side="left", fill="both", expand=1)
         
+        self.editor = Text(self.frame, yscrollcommand=self.yscrollbar.set, wrap="none", xscrollcommand=self.xscrollbar.set)
         self.editor.pack(side="left", fill="both", expand=1)
-        self.editor.config(wrap="word", undo=True, width=80)
+        self.editor.config(undo=True, width=80)
         self.editor.focus()
+
+        self.yscrollbar.config(command=self.editor.yview)
+        self.xscrollbar.config(command=self.editor.xview)
+        self.linenumbers.attach(self.editor)
 
     def displayFileExplorer(self):
 
