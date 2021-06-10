@@ -22,7 +22,6 @@ class TextEditor():
         
         frame = Frame(self.root)
         frame2 = Frame(self.root)
-
         
         self.frame = frame
         self.frame2 = frame2
@@ -42,6 +41,10 @@ class TextEditor():
         self.editor = Text(self.frame, yscrollcommand=self.yscrollbar.set)
         self.yscrollbar.config(command=self.editor.yview)
         self.yscrollbar.pack(side="right", fill="y")
+                
+        self.linenumbers = TextLineNumbers(self.frame, width=30)
+        self.linenumbers.attach(self.editor)
+        self.linenumbers.pack(side="left", fill="both", expand=1)
         
         self.editor.pack(side="left", fill="both", expand=1)
         self.editor.config(wrap="word", undo=True, width=80)
@@ -249,6 +252,15 @@ class TextEditor():
         self.editor.edit_redo()
 
     def bind_events(self, event=None):
+
+        self.editor.bind("<<Change>>", self._on_change)
+        self.editor.bind("<Configure>", self._on_change)
+        
+        
+        self.editor.bind("<MouseWheel>", self._on_change)
+        self.editor.bind("<KeyRelease>", self._on_change)
+        self.editor.bind("<KeyPress>", self._on_change)
+
         self.editor.bind("<Control-o>", self.file_open)
         self.editor.bind("<Control-O>", self.file_open)
         self.editor.bind("<Control-s>", self.file_save)
@@ -287,6 +299,7 @@ class TextEditor():
             pass
 
     def setStyles(self):
+        
         fontObject = Font(
             family = self.style.get('font'), 
             size = self.style.get('fontSize'),
@@ -296,7 +309,8 @@ class TextEditor():
         
         self.editor.configure(font=fontObject)
         self.editor.config(fg=self.style.get('fgColor'), bg=self.style.get('bgColor'))
-    
+        self._on_change(event=None)
+
     def saveProperties(self):
         props = {
             'style': self.style
@@ -325,3 +339,27 @@ class TextEditor():
             print(err)
 
         return properties
+
+    def _on_change(self, event):
+        self.linenumbers.redraw()
+
+class TextLineNumbers(Canvas):
+    def __init__(self, *args, **kwargs):
+        Canvas.__init__(self, *args, **kwargs)
+        self.textwidget = None
+
+    def attach(self, text_widget):
+        self.textwidget = text_widget
+
+    def redraw(self, *args):
+        '''redraw line numbers'''
+        self.delete("all")
+
+        i = self.textwidget.index("@0,0")
+        while True :
+            dline= self.textwidget.dlineinfo(i)
+            if dline is None: break
+            y = dline[1]
+            linenum = str(i).split(".")[0]
+            self.create_text(2,y,anchor="nw", text=linenum)
+            i = self.textwidget.index("%s+1line" % i)
