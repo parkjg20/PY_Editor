@@ -351,7 +351,7 @@ class TextEditor():
             slant = self.style.get('fontStyle'),
         )
         
-        self.editor.configure(font=fontObject)
+        self.editor.configure(font=fontObject, insertbackground=self.style.get('fgColor'))
         self.editor.config(fg=self.style.get('fgColor'), bg=self.style.get('bgColor'), spacing3=self.style.get('lineSpace'))
         self._on_change(event=None)
 
