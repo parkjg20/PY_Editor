@@ -8,6 +8,7 @@ from stylePopup import StylePopup
 from searchPopup import SearchPopup
 from os import listdir, replace, sep
 from os.path import isfile, join
+import copy as copy
 
 PROP_FILE_PATH = 'settings.json'
 
@@ -53,24 +54,19 @@ class TextEditor():
         fileExplorer = Frame(self.frame2, width=150)
         # fileExplorer.pack(side="left", fill='both', expand=1)
         fileExplorer.grid(row=0, column=0)
-
-        
-        if self.current_Dir != None:
-
-            onlyFiles = [f for f in listdir(self.current_Dir) if isfile(join(self.current_Dir, f))]
-            for i, fileName in enumerate(onlyFiles):
-                lb = Label(self.frame2, text=fileName)
-                realPath = join(self.current_Dir, fileName).replace("\\", "/")
-                print(i, realPath, self.file_path)
-                
-                if(self.file_path != None):
-                    if realPath.lower() == self.file_path.lower():
-                        lb.configure(bg="red")
-                        print(i, "일치 !")
-                lb.grid(row=i, column=0, sticky=W)
-        else:
-            openFolder = Button(self.frame2, text="Open Folder")
-            openFolder.grid(row=0, column=0)
+        onlyFiles = [f for f in listdir(self.current_Dir) if isfile(join(self.current_Dir, f))]
+        for i, fileName in enumerate(onlyFiles):
+            lb = Label(self.frame2, text=fileName)
+            realPath = join(self.current_Dir, fileName).replace("\\", "/")
+            lb.bind("<Button-1>", (lambda e: print(e.getEventObject())))
+            lb.bind("<Double-Button-1>", (lambda e: self.file_open()))
+            print(i, realPath, self.file_path)
+            
+            if(self.file_path != None):
+                if realPath.lower() == self.file_path.lower():
+                    lb.configure(bg="red")
+                    print(i, "일치 !")
+            lb.grid(row=i, column=0, sticky=W)
 
     def make_menu(self):
         self.menubar = Menu(self.root)
