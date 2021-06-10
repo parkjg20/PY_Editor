@@ -14,7 +14,8 @@ class StylePopup():
         self.frame = Toplevel()
 
         TITLE = "스타일 설정, P.Y Editor 1.0"
-        self.frame.geometry('{}x{}+{}+{}'.format(270, 200, x, y))
+        self.frame.geometry('{}x{}+{}+{}'.format(215, 200, x, y))
+        self.frame.minsize(215, 200)
         
         self.frame.title(TITLE)
         
@@ -27,21 +28,23 @@ class StylePopup():
         lbFontStyle = Label(frame, text='글꼴 스타일')
         lbFontWeight = Label(frame, text='글꼴 굵게')
         lbFontSize = Label(frame, text='크기')
+        lbLineSpace = Label(frame, text='줄 간격')
         lbFgColor = Label(frame, text='글자 색상')
-        inFgColorSelected = Entry(frame, width=13)
+        inFgColorSelected = Entry(frame, width=9)
         inFgColorSelected.insert(0, style.get('fgColor'))
         lbBgColor = Label(frame, text='배경 색상')
-        inBgColorSelected = Entry(frame, width=13)
+        inBgColorSelected = Entry(frame, width=9)
         inBgColorSelected.insert(0, style.get('bgColor'))
         
         lbFont.grid(row=0, column=0)
         lbFontStyle.grid(row=1, column=0)
         lbFontWeight.grid(row=2, column=0)
         lbFontSize.grid(row=3, column=0)
-        lbFgColor.grid(row=4, column=0)
-        inFgColorSelected.grid(row=4, column=1)
-        lbBgColor.grid(row=5, column=0)
-        inBgColorSelected.grid(row=5, column=1)
+        lbLineSpace.grid(row=4, column=0)
+        lbFgColor.grid(row=5, column=0)
+        inFgColorSelected.grid(row=5, column=1)
+        lbBgColor.grid(row=6, column=0)
+        inBgColorSelected.grid(row=6, column=1)
 
         # 글꼴 선택 Combobox
         currentFont = 0
@@ -51,7 +54,7 @@ class StylePopup():
                 currentFont = font[0]
                 break
 
-        cbFont = ttk.Combobox(frame, values=fontList, width=10)
+        cbFont = ttk.Combobox(frame, values=fontList, width=15)
         cbFont.current(currentFont)
 
         # 글꼴 스타일 선택 Combobox
@@ -62,7 +65,7 @@ class StylePopup():
                 currentStyle = fontStyle[0]
                 break
 
-        cbFontStyle = ttk.Combobox(frame, values=styleList, width=10)
+        cbFontStyle = ttk.Combobox(frame, values=styleList, width=15)
         cbFontStyle.current(currentStyle)
 
         # 글꼴 굵기 여부 선택 Checkbox (수정 예정)
@@ -85,7 +88,7 @@ class StylePopup():
                 currentFontWeight = fontWeight[0]
                 break
 
-        cbFontWeight = ttk.Combobox(frame, values=fontweightList, width=10)
+        cbFontWeight = ttk.Combobox(frame, values=fontweightList, width=15)
         cbFontWeight.current(currentFontWeight)
 
         # 글자 크기 선택 Combobox
@@ -96,34 +99,50 @@ class StylePopup():
                 currentFontSize = fontSize[0]
                 break
 
-        cbFontSize = ttk.Combobox(frame, values=fontSizeList, width=10)
+        cbFontSize = ttk.Combobox(frame, values=fontSizeList, width=15)
         cbFontSize.current(currentFontSize)
+
+        # 줄 간격 선택 Combobox
+        currentLineSpace = 0
+        lineSpaceList = [1, 3, 5, 8, 10, 15, 20]
+        for lineSpace in enumerate(lineSpaceList):
+            if(lineSpace[1] == style.get('lineSpace')):
+                currentLineSpace = lineSpace[0]
+                break
+
+        cbLineSpace = ttk.Combobox(frame, values=lineSpaceList, width=15)
+        cbLineSpace.current(currentLineSpace)
         
         # 색상표 호출
         fgColorBtn = Button(frame, text = "색상 선택", command = self.chooseFgColor)
         bgColorBtn = Button(frame, text = "색상 선택", command = self.chooseBgColor)
 
         # 위치 지정
-        cbFont.grid(row=0, column=1)
-        cbFontStyle.grid(row=1, column=1)
+        cbFont.grid(row=0, column=1, columnspan=2)
+        cbFontStyle.grid(row=1, column=1, columnspan=2)
             # cboxFontWeight.grid(row=2, column=1)
-        cbFontWeight.grid(row=2, column=1)
-        cbFontSize.grid(row=3, column=1)
-        fgColorBtn.grid(row=4, column=2)
-        bgColorBtn.grid(row=5, column=2)
+        cbFontWeight.grid(row=2, column=1, columnspan=2)
+        cbFontSize.grid(row=3, column=1, columnspan=2)
+        cbLineSpace.grid(row=4, column=1, columnspan=2)
+        fgColorBtn.grid(row=5, column=2)
+        bgColorBtn.grid(row=6, column=2)
 
         self.cbFont = cbFont
         self.cbFontStyle = cbFontStyle
             # self.cboxFontWeight = cboxFontWeight
         self.cbFontWeight = cbFontWeight
         self.cbFontSize = cbFontSize
+        self.cbLineSpace = cbLineSpace
         self.inFgColorSelected = inFgColorSelected
         self.inBgColorSelected = inBgColorSelected
 
-        trueBtn = Button(frame, text='확인', command=self.onApply)
-        falseBtn = Button(frame, text='취소', command=self.onCancel)
-        trueBtn.grid(row=6, column=0)
-        falseBtn.grid(row=6, column=1)
+        btnFrame = Frame(frame)
+        
+        trueBtn = Button(btnFrame, text='확인', command=self.onApply, padx=10)
+        falseBtn = Button(btnFrame, text='취소', command=self.onCancel, padx=10)
+        trueBtn.grid(row=0, column=0)
+        falseBtn.grid(row=0, column=1)
+        btnFrame.grid(row=7, column=0, columnspan=3, pady=8)
         
 
     def onCancel(self):
@@ -138,6 +157,7 @@ class StylePopup():
                 # "fontWeight": 'bold' if ( self.checked.get() == 1 ) else 'normal' ,
             "fontWeight": self.cbFontWeight.get().strip(),
             "fontSize": int(self.cbFontSize.get().strip()),
+            "lineSpace": int(self.cbLineSpace.get().strip()),
             "fgColor": self.inFgColorSelected.get().strip(),
             "bgColor": self.inBgColorSelected.get().strip()
         })

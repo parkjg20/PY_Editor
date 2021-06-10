@@ -340,11 +340,11 @@ class TextEditor():
             family = self.style.get('font'), 
             size = self.style.get('fontSize'),
             weight = self.style.get('fontWeight'),
-            slant = self.style.get('fontStyle')
+            slant = self.style.get('fontStyle'),
         )
         
         self.editor.configure(font=fontObject)
-        self.editor.config(fg=self.style.get('fgColor'), bg=self.style.get('bgColor'))
+        self.editor.config(fg=self.style.get('fgColor'), bg=self.style.get('bgColor'), spacing3=self.style.get('lineSpace'))
         self._on_change(event=None)
 
     def saveProperties(self):
@@ -382,12 +382,16 @@ class TextEditor():
                 self.style = properties.get('style')
                 self.options = properties.get('options')
 
+            if properties != None:
+                self.style = properties.get('style')
+
             if self.style is None:
                 self.style = {
-                    'font': 'Gothic',
+                    'font': 'System',
                     'fontWeight': 'normal',
                     'fontStyle': 'roman',
                     'fontSize': 16,
+                    'lineSpace': 1,
                     'fgColor': 'black',
                     'bgColor': 'white'
                 }
