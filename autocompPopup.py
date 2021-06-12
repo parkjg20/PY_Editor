@@ -1,6 +1,6 @@
 from popup import Popup
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 class AutocompPopup(Popup):
     '''자동완성 팝업'''
@@ -68,8 +68,18 @@ class AutocompPopup(Popup):
     # 항목 추가
     def onAppend(self, event=None):
         originEntry=self.originKeyword.get().strip()
+        if originEntry == '':
+            messagebox.showinfo('알림', '키워드를 입력해주세요.')
+            self.lift()
+            return
+        
         transitionEntry=self.transitionKeyword.get().strip()
+        if transitionEntry == '':
+            messagebox.showinfo('알림', '변경될 텍스트를 입력해주세요.')
+            self.lift()
+            return
+
         self.__auto_completes[originEntry]=transitionEntry
 
-        self.comboList.append(originEntry+":"+transitionEntry)
-        self.cbSet['values'] = self.comboList
+        self.cbSet['values'] = [f+":"+self.__auto_completes[f] for f in self.__auto_completes]
+        self.cbSet.current(0)

@@ -125,7 +125,7 @@ class TextEditor():
         # 폰트 설정 메뉴 추가
         fmenu = Menu(self.menubar, tearoff=0)
         fmenu.add_command(label="글꼴", command=self.display_style_popup)
-        self.menubar.add_cascade(label="Fonts", menu=fmenu)
+        self.menubar.add_cascade(label="Style", menu=fmenu)
 
         dmenu = Menu(self.menubar, tearoff = 0)
         
@@ -140,7 +140,7 @@ class TextEditor():
         self.menubar.add_cascade(label="Show", menu=dmenu)
 
         hmenu = Menu(self.menubar, tearoff=0)
-        hmenu.add_command(label="P.Y Editor", command=self.help_showabout)
+        hmenu.add_command(label="도움말", command=self.help_showabout)
         hmenu.add_command(label="자동완성", command=self.display_autocomp_popup)
         self.menubar.add_cascade(label="Features", menu=hmenu)
 
@@ -283,14 +283,32 @@ class TextEditor():
         
     def help_showabout(self, event=None):
         helpText = 'P.Y Editor 1.0\n\n'
-        helpText += '지원 기능\n'
-        helpText += '- 글꼴 선택\n'
-        helpText += '- 굵기 선택\n'
-        helpText += '- 스타일 설정\n'
-        helpText += '- 글씨 크기 설정\n'
-        helpText += '- 글꼴 색상 선택\n'
-        helpText += '- 배경색 선택\n' 
-        helpText += '- 텍스트 검색\n\n'
+        helpText += '- 지원 기능\n'
+        helpText += ' 1. 글꼴 선택\n'
+        helpText += ' 2. 글꼴 굵기 선택\n'
+        helpText += ' 3. 글꼴 스타일 설정\n'
+        helpText += ' 4. 글씨 크기 설정\n'
+        helpText += ' 5. 글꼴 색상 선택\n'
+        helpText += ' 6. 배경색 선택\n' 
+        helpText += ' 7. 텍스트 검색\n'
+        helpText += ' 8. 사용자 설정 저장 및 불러오기\n'
+        helpText += ' 9. 줄간격 조정\n'
+        helpText += '10. 키워드 자동완성\n'
+        helpText += '11. 자동완성 설정 저장\n'
+        helpText += '12. 파일 익스플로러\n'
+        helpText += '13. showTabs 설정 저장 및 불러오기\n'
+        helpText += '14. 폴더 오픈\n'
+        helpText += '15. 마지막 연 디렉터리 path 저장\n'
+        helpText += '16. 도움말(기능 설명)\n'
+        helpText += '17. 기능 단축키 구현\n\n'
+
+        helpText += '- 유저 편의사항\n'
+        helpText += ' 1. 파일 확장자를 사용자가 지정하지 않으면 자동으로 .txt파일로 저장\n'
+        helpText += ' 2. 줄 번호 표시\n'
+        helpText += ' 3. Show - 파일 익스플로러 탭 활성화 상태 표시\n'
+        helpText += ' 4. xscrollbar 추가\n'
+        helpText += ' 5. 커서 색상과 글자 색상 동기화\n'
+        helpText += ' 6. 현재 줄 표시\n\n'
 
         helpText += 'P.Y Editor Made by\n' 
         helpText += '- Park Jin Guk\n'
