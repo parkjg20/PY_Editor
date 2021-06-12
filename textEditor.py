@@ -96,7 +96,7 @@ class TextEditor():
         else:
             openFolder = Button(self.frame2, text="Open Folder", command=self.folder_open)
             openFolder.grid(row=0, column=0)
-        self._on_change(event=None)
+        self.linenumbers.redraw(event=None)
 
     def make_menu(self):
         self.menubar = Menu(self.root)
@@ -309,13 +309,12 @@ class TextEditor():
 
     def bind_events(self, event=None):
 
-        self.editor.bind("<<Change>>", self._on_change)
-        self.editor.bind("<Configure>", self._on_change)
-        
-        
-        self.editor.bind("<MouseWheel>", self._on_change)
-        self.editor.bind("<KeyRelease>", self._on_change)
-        self.editor.bind("<KeyPress>", self._on_change)
+        # 줄바꿈 표시를 위함
+        self.editor.bind("<<Change>>", self.linenumbers.redraw)
+        self.editor.bind("<Configure>", self.linenumbers.redraw)
+        self.editor.bind("<MouseWheel>", self.linenumbers.redraw)
+        self.editor.bind("<KeyRelease>", self.linenumbers.redraw)
+        self.editor.bind("<KeyPress>", self.linenumbers.redraw)
 
         self.editor.bind("<Control-o>", self.file_open)
         self.editor.bind("<Control-O>", self.file_open)
@@ -330,6 +329,7 @@ class TextEditor():
 
         self.editor.bind("<Control-f>", self.display_search_popup)
         self.editor.bind("<Control-F>", self.display_search_popup)
+        self.editor.bind("<Control-space>", self._auto_complete)
 
         self.editor.bind("<Control-y>", self.redo)
         self.editor.bind("<Control-Y>", self.redo)
@@ -378,7 +378,7 @@ class TextEditor():
         
         self.editor.configure(font=fontObject, insertbackground=self.style.get('fgColor')) # cursor색상 == font색상
         self.editor.config(fg=self.style.get('fgColor'), bg=self.style.get('bgColor'), spacing3=self.style.get('lineSpace'))
-        self._on_change(event=None)
+        self.linenumbers.redraw(event=None)
 
     def saveProperties(self):
         props = {
@@ -441,14 +441,52 @@ class TextEditor():
         print(self.options)
         print("Current Directory: ", self.current_dir)
 
+    #
     def _on_change(self, event):
         self.linenumbers.redraw()
 
     def _highlight_current_line(self, interval=100):
-        '''Updates the 'current line' highlighting every "interval" milliseconds'''
+        '''현재 줄 표시 0.1초마다 갱신'''
         self.editor.tag_remove("current_line", 1.0, "end")
         self.editor.tag_add("current_line", "insert linestart", "insert lineend+1c")
         self.root.after(interval, self._highlight_current_line)
+
+    def _auto_complete(self, event=None):
+        editor = self.editor
+        temp = editor.index(INSERT)
+        
+        word = self.__find_word(editor, temp)
+
+    # 현재 커서가 위치한 단어 검색
+    def __find_word(self, editor: Text, index):
+        _startIndex = self.indexArth(index, plus=False)
+        _endIndex = index
+
+        word = ''
+        while(True):
+            startChar = editor.get(_startIndex).strip()
+            endChar = editor.get(_endIndex).strip()
+            
+            startCol = int(_startIndex.split('.')[1])
+
+            if startChar != '' and startCol >= 0:
+                word = startChar + word
+                _startIndex = self.indexArth(_startIndex, plus=False)
+
+            if endChar != '':
+                word = word + endChar
+                _endIndex = self.indexArth(_endIndex, plus=True)
+
+            if ((startChar == '' or startCol < 0)
+                and endChar == ''):
+                break
+        return word
+
+    # 에디터 커서 index 증가/ 감소
+    def indexArth(self, index, plus=True):
+        row, col = index.split('.')
+        col = int(col) + 1 if plus else int(col) - 1
+        return row + '.' + str(col)
 
 class TextLineNumbers(Canvas):
     def __init__(self, *args, **kwargs):
@@ -458,7 +496,7 @@ class TextLineNumbers(Canvas):
     def attach(self, text_widget):
         self.textwidget = text_widget
 
-    def redraw(self, *args):
+    def redraw(self, *args, event=None):
         '''redraw line numbers'''
         self.delete("all")
 
