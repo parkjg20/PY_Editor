@@ -353,14 +353,15 @@ class TextEditor():
 
 
     def on_child_popup_closed(self, popup, options=None):
-        if (type(popup) is StylePopup) and options is not None:
-            self.style = options
-
-            self.setStyles()
+        if (type(popup) is StylePopup):
+            if options is not None:
+                self.style = options
+                self.setStyles()
+            
+            self.__stylePopup = None
             # 속성 변경
         elif type(popup) is SearchPopup:
-            print('search')
-            pass
+            self.__searchPopup = None
 
     def setStyles(self):
         print(self.style)
