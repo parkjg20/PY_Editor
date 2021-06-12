@@ -98,13 +98,17 @@ class TextEditor():
         fmenu.add_command(label="Open Folder...", command=self.folder_open, accelerator="Ctrl+D")
         fmenu.add_command(label="Save", command=self.file_save, accelerator="Ctrl+S")
         fmenu.add_command(label="Save As ...", command=self.file_save_as, accelerator="Ctrl+Alt+S")
+        fmenu.add_separator()
         fmenu.add_command(label="Exit", command=self.file_quit, accelerator="Alt+F4")
         self.menubar.add_cascade(label="File", menu=fmenu)
         
         emenu = Menu(self.menubar, tearoff=0)
-        emenu.add_command(label="Cut", command=self.edit_cut)
-        emenu.add_command(label="Copy", command=self.edit_copy)
-        emenu.add_command(label="Paste", command=self.edit_paste)
+        emenu.add_command(label="Undo", command=self.undo, accelerator="Ctrl+Z")
+        emenu.add_command(label="Redo", command=self.redo, accelerator="Ctrl+Y")
+        emenu.add_separator()
+        emenu.add_command(label="Cut", command=self.edit_cut, accelerator="Ctrl+X")
+        emenu.add_command(label="Copy", command=self.edit_copy, accelerator="Ctrl+C")
+        emenu.add_command(label="Paste", command=self.edit_paste, accelerator="Ctrl+C")
         self.menubar.add_cascade(label="Edit", menu=emenu)
         
         # 폰트 설정 메뉴 추가
@@ -121,7 +125,7 @@ class TextEditor():
         
         self.fileExplorerEnable = fileExplorerEnable
         dmenu.add_checkbutton(label="File Explorer", variable=self.fileExplorerEnable, onvalue=1, offvalue=0, command=(lambda: self.changeShowView()))
-        self.menubar.add_cascade(label="Show View", menu=dmenu)
+        self.menubar.add_cascade(label="Show", menu=dmenu)
 
         hmenu = Menu(self.menubar, tearoff=0)
         hmenu.add_command(label="P.Y Editor", command=self.help_showabout)
@@ -262,6 +266,7 @@ class TextEditor():
 
     def edit_paste(self, event=None):
         self.editor.event_generate("<<Paste>>")
+
         
     def help_showabout(self, event=None):
         helpText = 'P.Y Editor 1.0\n\n'
@@ -358,7 +363,8 @@ class TextEditor():
     def saveProperties(self):
         props = {
             'style': self.style,
-            'options': self.options
+            'options': self.options,
+            'path': self.realpath
         }
 
         try:

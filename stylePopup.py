@@ -138,8 +138,8 @@ class StylePopup():
 
         btnFrame = Frame(frame)
         
-        trueBtn = Button(btnFrame, text='확인', command=self.onApply, padx=10)
-        falseBtn = Button(btnFrame, text='취소', command=self.onCancel, padx=10)
+        trueBtn = Button(btnFrame, text='확인', command=self.onApply, padx=30)
+        falseBtn = Button(btnFrame, text='취소', command=self.onCancel, padx=30)
         trueBtn.grid(row=0, column=0)
         falseBtn.grid(row=0, column=1)
         btnFrame.grid(row=7, column=0, columnspan=3, pady=8)
