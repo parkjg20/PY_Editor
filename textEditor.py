@@ -6,6 +6,7 @@ from tkinter import filedialog, messagebox
 from tkinter.font import Font
 from stylePopup import StylePopup
 from searchPopup import SearchPopup
+from autocompPopup import AutocompPopup
 from os import listdir, replace, sep
 from os.path import isfile, join
 import copy as copy
@@ -24,6 +25,7 @@ class TextEditor():
         # child windows
         self.__stylePopup = None
         self.__searchPopup = None
+        self.__autocompPopup = None
 
         self.set_title()
         
@@ -138,7 +140,8 @@ class TextEditor():
 
         hmenu = Menu(self.menubar, tearoff=0)
         hmenu.add_command(label="P.Y Editor", command=self.help_showabout)
-        self.menubar.add_cascade(label="Help", menu=hmenu)
+        hmenu.add_command(label="자동완성", command=self.display_autocomp_popup)
+        self.menubar.add_cascade(label="Features", menu=hmenu)
 
         self.root.config(menu=self.menubar)
         
@@ -331,6 +334,8 @@ class TextEditor():
         self.editor.bind("<Control-f>", self.display_search_popup)
         self.editor.bind("<Control-F>", self.display_search_popup)
 
+        # 자동완성 팝업 단축키 추가!!!!!!!!!!!!!!!!!!!
+
         self.editor.bind("<Control-y>", self.redo)
         self.editor.bind("<Control-Y>", self.redo)
         self.editor.bind("<Control-z>", self.undo)
@@ -354,6 +359,15 @@ class TextEditor():
             self.__searchPopup = SearchPopup(self, x, y)
         
         self.__searchPopup.lift()
+
+    def display_autocomp_popup(self, event=None):
+
+        if self.__autocompPopup is None:
+            x = self.root.winfo_x()
+            y = self.root.winfo_y()
+            self.__autocompPopup = AutocompPopup(self,  x, y)
+        
+        self.__autocompPopup.lift()
 
 
     def on_child_popup_closed(self, popup, options=None):
