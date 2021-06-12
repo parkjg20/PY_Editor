@@ -65,7 +65,6 @@ class TextEditor():
         self.linenumbers = TextLineNumbers(self.frame, width=30, relief='sunken', borderwidth=1)
         self.linenumbers.pack(side="left", fill="both", expand=1)
         
-
         self.editor = Text(self.frame, yscrollcommand=self.yscrollbar.set, wrap="none", xscrollcommand=self.xscrollbar.set)
         self.editor.pack(side="left", fill="both", expand=1)
         self.editor.config(undo=True, width=80)
@@ -331,36 +330,44 @@ class TextEditor():
 
     def bind_events(self, event=None):
 
-        # 줄바꿈 표시를 위함
+        # 줄바꿈 표시를 위해 등록
         self.editor.bind("<<Change>>", self.linenumbers.redraw)
         self.editor.bind("<Configure>", self.linenumbers.redraw)
         self.editor.bind("<MouseWheel>", self.linenumbers.redraw)
         self.editor.bind("<KeyRelease>", self.linenumbers.redraw)
         self.editor.bind("<KeyPress>", self.linenumbers.redraw)
+        # 줄바꿈 표시 등록 끝
 
         self.editor.bind("<Control-o>", self.file_open)
         self.editor.bind("<Control-O>", self.file_open)
+
+        # 폴더 열기
         self.editor.bind("<Control-d>", self.folder_open)
         self.editor.bind("<Control-D>", self.folder_open)
+
         self.editor.bind("<Control-s>", self.file_save)
         self.editor.bind("<Control-S>", self.file_save)
+
+        # 도움말 단축키 추가
         self.editor.bind("<F1>", self.help_showabout)
 
+        # 스타일 팝업
         self.editor.bind("<Control-Shift-f>", self.display_style_popup)
         self.editor.bind("<Control-Shift-F>", self.display_style_popup)
 
+        # 검색 팝업
         self.editor.bind("<Control-f>", self.display_search_popup)
         self.editor.bind("<Control-F>", self.display_search_popup)
+       
+        # 자동완성 등록 팝업
         self.editor.bind("<Control-space>", self._auto_complete)
-
-        # 자동완성 팝업 단축키 추가!!!!!!!!!!!!!!!!!!!
 
         self.editor.bind("<Control-y>", self.redo)
         self.editor.bind("<Control-Y>", self.redo)
         self.editor.bind("<Control-z>", self.undo)
         self.editor.bind("<Control-Z>", self.undo)
     
-    # StylePopup 생성
+    # StylePopup 표시
     def display_style_popup(self, event=None):
 
         if self.__stylePopup is None:
@@ -370,6 +377,7 @@ class TextEditor():
         
         self.__stylePopup.lift()
 
+    # SearchPopup 표시
     def display_search_popup(self, event=None):
         if self.__searchPopup is None:
             x = self.root.winfo_x() + self.root.winfo_width()
@@ -379,6 +387,7 @@ class TextEditor():
         
         self.__searchPopup.lift()
 
+    # AutocompPopup 표시
     def display_autocomp_popup(self, event=None):
 
         if self.__autocompPopup is None:
@@ -389,6 +398,7 @@ class TextEditor():
         self.__autocompPopup.lift()
 
 
+    # listen popup close
     def on_child_popup_closed(self, popup, options=None):
         if (type(popup) is StylePopup):
             if options is not None:
@@ -404,6 +414,7 @@ class TextEditor():
                 self.auto_completes = options
             self.__autocompPopup = None
 
+    # 스타일 적용
     def setStyles(self):
         print(self.style)
         fontObject = Font(
@@ -417,6 +428,7 @@ class TextEditor():
         self.editor.config(fg=self.style.get('fgColor'), bg=self.style.get('bgColor'), spacing3=self.style.get('lineSpace'))
         self.linenumbers.redraw(event=None)
 
+    # 설정들 Json으로 저장
     def saveProperties(self):
         props = {
             'style': self.style,
@@ -431,6 +443,7 @@ class TextEditor():
         except FileNotFoundError as err:
             print(err)
 
+    # 설정 Load
     def loadProperties(self):
         properties = None
         
@@ -458,6 +471,7 @@ class TextEditor():
             self.current_dir = properties.get('current_dir')
             self.auto_completes = properties.get('auto_completes')
 
+        # 이 아래로 기본값 대입
         if self.style is None:
             self.style = {
                 'font': 'System',
@@ -481,16 +495,18 @@ class TextEditor():
         if self.auto_completes is None:
             self.auto_completes = dict()
 
-    #
+    # Editor에서 수정 이벤트 발생시 실행
     def _on_change(self, event):
         self.linenumbers.redraw()
 
+    # 현재 라인 표시
     def _highlight_current_line(self, interval=100):
         '''현재 줄 표시 0.1초마다 갱신'''
         self.editor.tag_remove("current_line", 1.0, "end")
         self.editor.tag_add("current_line", "insert linestart", "insert lineend+1c")
         self.root.after(interval, self._highlight_current_line)
 
+    # 자동 완성
     def _auto_complete(self, event=None):
         editor = self.editor
         temp = editor.index(INSERT)
@@ -503,9 +519,6 @@ class TextEditor():
             editor.insert(startIndex, replacedWord)
         else:
             print("nothing to change")
-
-
-
 
     # 현재 커서가 위치한 단어 검색
     def __find_word(self, editor: Text, index):
@@ -540,6 +553,7 @@ class TextEditor():
         return row + '.' + str(col)
 
 class TextLineNumbers(Canvas):
+    '''행번호 표시 기능을 위한 객체'''
     def __init__(self, *args, **kwargs):
         Canvas.__init__(self, *args, **kwargs)
         self.textwidget = None

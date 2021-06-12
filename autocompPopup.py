@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import ttk, messagebox
 
 class AutocompPopup(Popup):
-    '''자동완성 팝업'''
+    '''자동 완성 키워드 등록 팝업'''
 
     def __init__(self, parent, x=0, y=0, auto_completes=dict()):
         Popup.__init__(self, parent, 270, 180, x, y)
@@ -31,7 +31,6 @@ class AutocompPopup(Popup):
         addBtn = Button(frame, text="추가", command=self.onAppend)
         addBtn.grid(row=1, column=3, rowspan=2, padx=5)
 
-        currentSet = 0
         self.comboList = [ f + ":" + self.__auto_completes[f] for f in self.__auto_completes]
 
         lbSet = Label(frame, text="설정된 키워드")

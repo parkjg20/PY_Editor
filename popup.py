@@ -1,6 +1,7 @@
 from tkinter import *
 
 class Popup():
+    '''팝업의 슈퍼클래스 팝업 기본 기능 정의'''
     def __init__(self, parent, width, height, x, y, style=None):
         self.parent = parent
         self.frame = Toplevel()
