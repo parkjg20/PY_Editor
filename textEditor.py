@@ -477,7 +477,17 @@ class TextEditor():
         editor = self.editor
         temp = editor.index(INSERT)
         
-        word = self.__find_word(editor, temp)
+        startIndex, endIndex, word = self.__find_word(editor, temp)
+        
+        if word in self.auto_completes.keys():
+            replacedWord = self.auto_completes.get(word)
+            editor.delete(startIndex, endIndex)
+            editor.insert(startIndex, replacedWord)
+        else:
+            print("nothing to change")
+
+
+
 
     # 현재 커서가 위치한 단어 검색
     def __find_word(self, editor: Text, index):
@@ -502,7 +512,8 @@ class TextEditor():
             if ((startChar == '' or startCol < 0)
                 and endChar == ''):
                 break
-        return word
+        
+        return _startIndex, _endIndex, word
 
     # 에디터 커서 index 증가/ 감소
     def indexArth(self, index, plus=True):
