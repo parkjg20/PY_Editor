@@ -279,7 +279,7 @@ class TextEditor():
     def edit_paste(self, event=None):
         self.editor.event_generate("<<Paste>>")
 
-        
+    # 도움말
     def help_showabout(self, event=None):
         helpText = 'P.Y Editor 1.0\n\n'
         helpText += '- 지원 기능\n'
@@ -320,7 +320,7 @@ class TextEditor():
             title = os.path.basename(self.file_path)
         else:
             title = 'Untitled'
-        self.root.title(title + ' = ' + self.TITLE)
+        self.root.title(title + ' - ' + self.TITLE)
 
     def undo(self, event=None):
         self.editor.edit_undo()
@@ -358,7 +358,7 @@ class TextEditor():
         # 검색 팝업
         self.editor.bind("<Control-f>", self.display_search_popup)
         self.editor.bind("<Control-F>", self.display_search_popup)
-       
+        
         # 자동완성 등록 팝업
         self.editor.bind("<Control-space>", self._auto_complete)
 

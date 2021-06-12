@@ -12,7 +12,7 @@ class SearchPopup(Popup):
         self.frame.resizable(width=False, height=False)
 
         TITLE = "검색, P.Y Editor 1.0"
-       
+        
         self.frame.title(TITLE)
         
         self.createGUI(self.frame)

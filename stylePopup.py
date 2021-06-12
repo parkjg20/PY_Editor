@@ -65,18 +65,6 @@ class StylePopup(Popup):
         cbFontStyle = ttk.Combobox(frame, values=styleList, width=15)
         cbFontStyle.current(currentStyle)
 
-        # 글꼴 굵기 여부 선택 Checkbox (수정 예정)
-            # self.checked = 0
-            # # self.checked = None
-            # fontWeightList = ["normal", "bold"]
-            # for fontWeight in enumerate(fontWeightList):
-            #     if(fontWeight[1] == style.get('fontWeight')):
-            #         self.checked = fontWeight[0]
-            #         break
-            
-            # print(self.checked)
-            # cboxFontWeight = Checkbutton(frame, text='체크',variable=self.checked, onvalue=1, offvalue=0)
-
         # 글꼴 굵기 여부 선택 Combobox
         currentFontWeight = 0
         fontweightList = ["normal", "bold"]
@@ -117,7 +105,6 @@ class StylePopup(Popup):
         # 위치 지정
         cbFont.grid(row=0, column=1, columnspan=2)
         cbFontStyle.grid(row=1, column=1, columnspan=2)
-            # cboxFontWeight.grid(row=2, column=1)
         cbFontWeight.grid(row=2, column=1, columnspan=2)
         cbFontSize.grid(row=3, column=1, columnspan=2)
         cbLineSpace.grid(row=4, column=1, columnspan=2)
@@ -126,7 +113,6 @@ class StylePopup(Popup):
 
         self.cbFont = cbFont
         self.cbFontStyle = cbFontStyle
-            # self.cboxFontWeight = cboxFontWeight
         self.cbFontWeight = cbFontWeight
         self.cbFontSize = cbFontSize
         self.cbLineSpace = cbLineSpace
@@ -134,7 +120,6 @@ class StylePopup(Popup):
         self.inBgColorSelected = inBgColorSelected
 
         btnFrame = Frame(frame)
-        
         trueBtn = Button(btnFrame, text='확인', command=self.onApply, padx=30)
         falseBtn = Button(btnFrame, text='취소', command=self.onCancel, padx=30)
         trueBtn.grid(row=0, column=0)
