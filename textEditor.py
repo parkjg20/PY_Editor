@@ -50,22 +50,30 @@ class TextEditor():
 
 
     def draw_gui(self):
+        # vertical scrollbar
         self.yscrollbar = Scrollbar(self.frame, orient="vertical")
-        self.editor = Text(self.frame, yscrollcommand=self.yscrollbar.set)
-        self.yscrollbar.config(command=self.editor.yview)
         self.yscrollbar.pack(side="right", fill="y")
-                
+
+        # horizontal scrollbar
+        self.xscrollbar = Scrollbar(self.frame, orient="horizontal")
+        self.xscrollbar.pack(side="bottom", fill="x")
+
+        # line counter
         self.linenumbers = TextLineNumbers(self.frame, width=30, relief='sunken', borderwidth=1)
-        self.linenumbers.attach(self.editor)
         self.linenumbers.pack(side="left", fill="both", expand=1)
         
+
+        self.editor = Text(self.frame, yscrollcommand=self.yscrollbar.set, wrap="none", xscrollcommand=self.xscrollbar.set)
         self.editor.pack(side="left", fill="both", expand=1)
-        self.editor.config(wrap="word", undo=True, width=80)
+        self.editor.config(undo=True, width=80)
         self.editor.focus()
 
         self.editor.tag_configure("current_line", background="#e9e9e9")
         self.editor.tag_configure("search_keyword", background="#e9e9e9")
         self._highlight_current_line()
+        self.yscrollbar.config(command=self.editor.yview)
+        self.xscrollbar.config(command=self.editor.xview)
+        self.linenumbers.attach(self.editor)
 
     def displayFileExplorer(self):
 
@@ -98,18 +106,18 @@ class TextEditor():
         fmenu.add_command(label="Open Folder...", command=self.folder_open, accelerator="Ctrl+D")
         fmenu.add_command(label="Save", command=self.file_save, accelerator="Ctrl+S")
         fmenu.add_command(label="Save As ...", command=self.file_save_as, accelerator="Ctrl+Alt+S")
+        fmenu.add_separator()
         fmenu.add_command(label="Exit", command=self.file_quit, accelerator="Alt+F4")
         self.menubar.add_cascade(label="File", menu=fmenu)
         
         emenu = Menu(self.menubar, tearoff=0)
-        emenu.add_command(label="Cut", command=self.edit_cut)
-        emenu.add_command(label="Copy", command=self.edit_copy)
-        emenu.add_command(label="Paste", command=self.edit_paste)
+        emenu.add_command(label="Undo", command=self.undo, accelerator="Ctrl+Z")
+        emenu.add_command(label="Redo", command=self.redo, accelerator="Ctrl+Y")
+        emenu.add_separator()
+        emenu.add_command(label="Cut", command=self.edit_cut, accelerator="Ctrl+X")
+        emenu.add_command(label="Copy", command=self.edit_copy, accelerator="Ctrl+C")
+        emenu.add_command(label="Paste", command=self.edit_paste, accelerator="Ctrl+C")
         self.menubar.add_cascade(label="Edit", menu=emenu)
-
-        hmenu = Menu(self.menubar, tearoff=0)
-        hmenu.add_command(label="P.Y Editor", command=self.help_showabout)
-        self.menubar.add_cascade(label="Help", menu=hmenu)
         
         # 폰트 설정 메뉴 추가
         fmenu = Menu(self.menubar, tearoff=0)
@@ -125,8 +133,11 @@ class TextEditor():
         
         self.fileExplorerEnable = fileExplorerEnable
         dmenu.add_checkbutton(label="File Explorer", variable=self.fileExplorerEnable, onvalue=1, offvalue=0, command=(lambda: self.changeShowTabs()))
+        self.menubar.add_cascade(label="Show", menu=dmenu)
 
-        self.menubar.add_cascade(label="Show View", menu=dmenu)
+        hmenu = Menu(self.menubar, tearoff=0)
+        hmenu.add_command(label="P.Y Editor", command=self.help_showabout)
+        self.menubar.add_cascade(label="Help", menu=hmenu)
 
         self.root.config(menu=self.menubar)
         
@@ -263,6 +274,7 @@ class TextEditor():
 
     def edit_paste(self, event=None):
         self.editor.event_generate("<<Paste>>")
+
         
     def help_showabout(self, event=None):
         helpText = 'P.Y Editor 1.0\n\n'
@@ -358,14 +370,15 @@ class TextEditor():
             slant = self.style.get('fontStyle'),
         )
         
-        self.editor.configure(font=fontObject)
+        self.editor.configure(font=fontObject, insertbackground=self.style.get('fgColor')) # cursor색상 == font색상
         self.editor.config(fg=self.style.get('fgColor'), bg=self.style.get('bgColor'), spacing3=self.style.get('lineSpace'))
         self._on_change(event=None)
 
     def saveProperties(self):
         props = {
             'style': self.style,
-            'options': self.options
+            'options': self.options,
+            'path': self.realpath
         }
 
         try:
