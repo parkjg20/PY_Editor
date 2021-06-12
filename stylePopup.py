@@ -18,6 +18,7 @@ class StylePopup():
         self.frame.minsize(215, 200)
         
         self.frame.title(TITLE)
+        self.frame.protocol("WM_DELETE_WINDOW", self.onCancel)
         
         print(style)
         self.createGUI(self.frame, style)
@@ -143,6 +144,7 @@ class StylePopup():
         trueBtn.grid(row=0, column=0)
         falseBtn.grid(row=0, column=1)
         btnFrame.grid(row=7, column=0, columnspan=3, pady=8)
+        
         
 
     def onCancel(self):

@@ -13,6 +13,7 @@ class SearchPopup():
         TITLE = "검색, P.Y Editor 1.0"
         self.frame.geometry('{}x{}+{}+{}'.format(400, 150, x-420, y + 20))
         self.frame.title(TITLE)
+        self.frame.protocol("WM_DELETE_WINDOW", self.onCancel)
         
         self.createGUI(self.frame)
     
