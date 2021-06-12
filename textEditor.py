@@ -17,7 +17,7 @@ class TextEditor():
     def __init__(self, root):
         self.root = root
         self.TITLE = "P.Y Editor 1.0"
-        self.current_Dir = None
+        self.current_dir = None
         self.file_path = None
         self.options = None
 
@@ -80,13 +80,13 @@ class TextEditor():
         for child in self.frame2.winfo_children():
             child.destroy()
         
-        if self.current_Dir != None:
+        if self.current_dir != None:
 
-            onlyFiles = [f for f in listdir(self.current_Dir) if isfile(join(self.current_Dir, f))]
+            onlyFiles = [f for f in listdir(self.current_dir) if isfile(join(self.current_dir, f))]
             for i, fileName in enumerate(onlyFiles):
                 lb = Label(self.frame2, text=fileName)
-                realPath = join(self.current_Dir, fileName).replace("\\", "/")
-                lb.bind("<Double-Button-1>", (lambda e: self.file_open(filepath=join(self.current_Dir, e.widget.cget("text")).replace("\\", "/"))))
+                realPath = join(self.current_dir, fileName).replace("\\", "/")
+                lb.bind("<Double-Button-1>", (lambda e: self.file_open(filepath=join(self.current_dir, e.widget.cget("text")).replace("\\", "/"))))
                 
                 if(self.file_path != None):
                     if realPath.lower() == self.file_path.lower():
@@ -214,12 +214,12 @@ class TextEditor():
             if dirPath == None:
                 dirPath = filedialog.askdirectory()
             
-            self.current_Dir = dirPath
+            self.current_dir = dirPath
             try:
                 self.displayFileExplorer()
             except FileNotFoundError as err:
                 print("폴더 열기 실패")
-                self.current_Dir = None
+                self.current_dir = None
                 self.displayFileExplorer()
 
     def file_save(self, event=None):
@@ -379,7 +379,7 @@ class TextEditor():
         props = {
             'style': self.style,
             'options': self.options,
-            'path': self.realpath
+            'current_dir': self.current_dir
         }
 
         try:
@@ -406,13 +406,12 @@ class TextEditor():
         else:
             self.style = None
             self.options = None
+            self.current_dir = None
 
             if properties != None:
                 self.style = properties.get('style')
                 self.options = properties.get('options')
-
-            if properties != None:
-                self.style = properties.get('style')
+                self.current_dir = properties.get('current_dir')
 
             if self.style is None:
                 self.style = {
@@ -428,7 +427,6 @@ class TextEditor():
             self.setStyles()
 
             if self.options is None:
-
                 self.options = {
                     'showView': {
                         'fileExplorer': True
@@ -436,6 +434,7 @@ class TextEditor():
                 }
 
             print(self.options)
+            print("Current Directory: "+self.current_dir)
 
     def _on_change(self, event):
         self.linenumbers.redraw()
