@@ -21,6 +21,10 @@ class TextEditor():
         self.file_path = None
         self.options = None
 
+        # child windows
+        self.__stylePopup = None
+        self.__searchPopup = None
+
         self.set_title()
         
         frame = Frame(self.root)
@@ -34,13 +38,14 @@ class TextEditor():
         
         self.root.protocol("WM_DELETE_WINDOW", self.file_quit)
         
+        # draw gui는 properties 영향 X
         self.draw_gui()
-
         self.loadProperties()
         
+        # menu, showView 는 properties 영향 받음
         self.make_menu()
         
-        self.changeShowView()
+        self.changeShowTabs()
         self.bind_events()
 
 
@@ -63,6 +68,9 @@ class TextEditor():
         self.editor.config(undo=True, width=80)
         self.editor.focus()
 
+        self.editor.tag_configure("current_line", background="#e9e9e9")
+        self.editor.tag_configure("search_keyword", background="#e9e9e9")
+        self._highlight_current_line()
         self.yscrollbar.config(command=self.editor.yview)
         self.xscrollbar.config(command=self.editor.xview)
         self.linenumbers.attach(self.editor)
@@ -113,7 +121,7 @@ class TextEditor():
         
         # 폰트 설정 메뉴 추가
         fmenu = Menu(self.menubar, tearoff=0)
-        fmenu.add_command(label="글꼴", command=self.display_font_popup)
+        fmenu.add_command(label="글꼴", command=self.display_style_popup)
         self.menubar.add_cascade(label="Fonts", menu=fmenu)
 
         dmenu = Menu(self.menubar, tearoff = 0)
@@ -124,7 +132,7 @@ class TextEditor():
             fileExplorerEnable.set(self.options.get('showView').get('fileExplorer'))
         
         self.fileExplorerEnable = fileExplorerEnable
-        dmenu.add_checkbutton(label="File Explorer", variable=self.fileExplorerEnable, onvalue=1, offvalue=0, command=(lambda: self.changeShowView()))
+        dmenu.add_checkbutton(label="File Explorer", variable=self.fileExplorerEnable, onvalue=1, offvalue=0, command=(lambda: self.changeShowTabs()))
         self.menubar.add_cascade(label="Show", menu=dmenu)
 
         hmenu = Menu(self.menubar, tearoff=0)
@@ -133,7 +141,7 @@ class TextEditor():
 
         self.root.config(menu=self.menubar)
         
-    def changeShowView(self):
+    def changeShowTabs(self):
 
         self.options.get('showView')['fileExplorer'] = self.fileExplorerEnable.get()
         if(not self.fileExplorerEnable.get()):
@@ -324,17 +332,23 @@ class TextEditor():
         self.editor.bind("<Control-Z>", self.undo)
     
     # StylePopup 생성
-    def display_font_popup(self):
-        x = self.root.winfo_x()
-        y = self.root.winfo_y()
+    def display_style_popup(self):
 
-        popup = StylePopup(self, self.style,  x, y)
+        if self.__stylePopup is None:
+            x = self.root.winfo_x()
+            y = self.root.winfo_y()
+            self.__stylePopup = StylePopup(self, self.style,  x, y)
+        else:
+            self.__stylePopup.frame.lift()
 
     def display_search_popup(self, event=None):
-        x = self.root.winfo_x() + self.root.winfo_width()
-        y = self.root.winfo_y()
+        if self.__searchPopup is None:
+            x = self.root.winfo_x() + self.root.winfo_width()
+            y = self.root.winfo_y()
 
-        popup = SearchPopup(self, x, y)
+            self.__searchPopup = SearchPopup(self, x, y)
+        else:
+            self.__searchPopup.frame.lift()
 
 
     def on_child_popup_closed(self, popup, options=None):
@@ -423,6 +437,12 @@ class TextEditor():
 
     def _on_change(self, event):
         self.linenumbers.redraw()
+
+    def _highlight_current_line(self, interval=100):
+        '''Updates the 'current line' highlighting every "interval" milliseconds'''
+        self.editor.tag_remove("current_line", 1.0, "end")
+        self.editor.tag_add("current_line", "insert linestart", "insert lineend+1c")
+        self.root.after(interval, self._highlight_current_line)
 
 class TextLineNumbers(Canvas):
     def __init__(self, *args, **kwargs):
