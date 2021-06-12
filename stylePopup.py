@@ -1,30 +1,26 @@
 # -*- coding: utf-8 -*-
+from popup import Popup
 from tkinter import *
 from tkinter import ttk
 from tkinter import colorchooser
 import tkinter.font as tkFont
 
-
 # 사용자 편의 기능 2. 폰트 설정 팝업 표시
-class StylePopup():
+class StylePopup(Popup):
     '''스타일 설정 팝업'''
 
     def __init__(self, parent, style,  x=0, y=0):
-        self.parent = parent
-        self.frame = Toplevel()
+        Popup.__init__(self, parent, 215, 200, x, y, style=style)
 
         TITLE = "스타일 설정, P.Y Editor 1.0"
-        self.frame.geometry('{}x{}+{}+{}'.format(215, 200, x, y))
-        self.frame.minsize(215, 200)
         
         self.frame.title(TITLE)
-        self.frame.protocol("WM_DELETE_WINDOW", self.onCancel)
         
         print(style)
         self.createGUI(self.frame, style)
     
     def createGUI(self, frame, style):
-    # create child framedow
+        # create child framedow
         lbFont = Label(frame, text='글꼴', width=10)
         lbFontStyle = Label(frame, text='글꼴 스타일')
         lbFontWeight = Label(frame, text='글꼴 굵게')
@@ -145,13 +141,7 @@ class StylePopup():
         falseBtn.grid(row=0, column=1)
         btnFrame.grid(row=7, column=0, columnspan=3, pady=8)
         
-        
-
-    def onCancel(self):
-        self.parent.on_child_popup_closed(self)
-        self.frame.destroy()
-
-    def onApply(self):
+    def onApply(self, event=None):
         print("Destroy", self)
         options = dict({
             "font": self.cbFont.get().strip(),

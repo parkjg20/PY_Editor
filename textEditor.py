@@ -343,8 +343,8 @@ class TextEditor():
             x = self.root.winfo_x()
             y = self.root.winfo_y()
             self.__stylePopup = StylePopup(self, self.style,  x, y)
-        else:
-            self.__stylePopup.frame.lift()
+        
+        self.__stylePopup.lift()
 
     def display_search_popup(self, event=None):
         if self.__searchPopup is None:
@@ -352,8 +352,8 @@ class TextEditor():
             y = self.root.winfo_y()
 
             self.__searchPopup = SearchPopup(self, x, y)
-        else:
-            self.__searchPopup.frame.lift()
+        
+        self.__searchPopup.lift()
 
 
     def on_child_popup_closed(self, popup, options=None):
