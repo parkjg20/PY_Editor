@@ -128,7 +128,8 @@ class TextEditor():
         
         fileExplorerEnable = BooleanVar()
         fileExplorerEnable.set(True)
-        if(self.options.get('showView').get('fileExplorer') != None):
+
+        if(self.options.get('showView').get('fileExplorer') is not None):
             fileExplorerEnable.set(self.options.get('showView').get('fileExplorer'))
         
         self.fileExplorerEnable = fileExplorerEnable
@@ -402,38 +403,38 @@ class TextEditor():
                     properties = json.loads(s=file)
         except FileNotFoundError as err:
             print(err)
-        else:
-            self.style = None
-            self.options = None
-            self.current_dir = None
 
-            if properties != None:
-                self.style = properties.get('style')
-                self.options = properties.get('options')
-                self.current_dir = properties.get('current_dir')
+        self.style = None
+        self.options = None
+        self.current_dir = None
 
-            if self.style is None:
-                self.style = {
-                    'font': 'System',
-                    'fontWeight': 'normal',
-                    'fontStyle': 'roman',
-                    'fontSize': 16,
-                    'lineSpace': 1,
-                    'fgColor': 'black',
-                    'bgColor': 'white'
+        if properties != None:
+            self.style = properties.get('style')
+            self.options = properties.get('options')
+            self.current_dir = properties.get('current_dir')
+
+        if self.style is None:
+            self.style = {
+                'font': 'System',
+                'fontWeight': 'normal',
+                'fontStyle': 'roman',
+                'fontSize': 16,
+                'lineSpace': 1,
+                'fgColor': 'black',
+                'bgColor': 'white'
+            }
+
+        self.setStyles()
+
+        if self.options is None:
+            self.options = {
+                'showView': {
+                    'fileExplorer': True
                 }
+            }
 
-            self.setStyles()
-
-            if self.options is None:
-                self.options = {
-                    'showView': {
-                        'fileExplorer': True
-                    }
-                }
-
-            print(self.options)
-            print("Current Directory: "+self.current_dir)
+        print(self.options)
+        print("Current Directory: ", self.current_dir)
 
     def _on_change(self, event):
         self.linenumbers.redraw()
