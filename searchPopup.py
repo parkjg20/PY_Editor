@@ -7,7 +7,7 @@ class SearchPopup(Popup):
     '''검색어 입력 팝업'''
 
     def __init__(self, parent, x=0, y=0):
-        Popup.__init__(self, parent, 400, 150, x-420, y+20)
+        Popup.__init__(self, parent, 330, 40, x-420, y+20)
 
         self.frame.resizable(width=False, height=False)
 
@@ -24,9 +24,9 @@ class SearchPopup(Popup):
 
         self.btnSearch = Button(frame, text="검색", command=self.onApply)
 
-        self.lbKeyword.grid(row=0, column=0)
-        self.inKeyword.grid(row=0, column=1)
-        self.btnSearch.grid(row=0, column=2)
+        self.lbKeyword.grid(row=0, column=0, padx=5, pady=5)
+        self.inKeyword.grid(row=0, column=1, padx=5, pady=5)
+        self.btnSearch.grid(row=0, column=2, padx=5, pady=5)
 
         self.inKeyword.focus()
         

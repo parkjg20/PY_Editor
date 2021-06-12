@@ -7,6 +7,9 @@ class AutocompPopup(Popup):
 
     def __init__(self, parent, x=0, y=0, auto_completes=dict()):
         Popup.__init__(self, parent, 270, 180, x, y)
+
+        self.frame.resizable(width=False, height=False)
+
         self.__auto_completes = auto_completes
         TITLE = "자동완성 팝업, P.Y Editor 1.0"
 

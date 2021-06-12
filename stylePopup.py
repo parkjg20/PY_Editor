@@ -12,6 +12,8 @@ class StylePopup(Popup):
     def __init__(self, parent, style,  x=0, y=0):
         Popup.__init__(self, parent, 215, 200, x, y, style=style)
 
+        self.frame.resizable(width=False, height=False)
+
         TITLE = "스타일 설정, P.Y Editor 1.0"
         
         self.frame.title(TITLE)

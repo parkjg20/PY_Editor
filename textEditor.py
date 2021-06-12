@@ -38,7 +38,7 @@ class TextEditor():
         
         frame2.pack(side="left", fill="both", expand=1)
         frame.pack(side="right", fill="both", expand=1)
-        
+
         self.root.protocol("WM_DELETE_WINDOW", self.file_quit)
         
         # draw gui는 properties 영향 X
