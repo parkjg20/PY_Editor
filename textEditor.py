@@ -323,7 +323,11 @@ class TextEditor():
         self.editor.bind("<Control-D>", self.folder_open)
         self.editor.bind("<Control-s>", self.file_save)
         self.editor.bind("<Control-S>", self.file_save)
-        
+        self.editor.bind("<F1>", self.help_showabout)
+
+        self.editor.bind("<Control-Shift-f>", self.display_style_popup)
+        self.editor.bind("<Control-Shift-F>", self.display_style_popup)
+
         self.editor.bind("<Control-f>", self.display_search_popup)
         self.editor.bind("<Control-F>", self.display_search_popup)
 
@@ -333,7 +337,7 @@ class TextEditor():
         self.editor.bind("<Control-Z>", self.undo)
     
     # StylePopup 생성
-    def display_style_popup(self):
+    def display_style_popup(self, event=None):
 
         if self.__stylePopup is None:
             x = self.root.winfo_x()
