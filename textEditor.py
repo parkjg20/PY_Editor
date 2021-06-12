@@ -21,6 +21,7 @@ class TextEditor():
         self.current_dir = None
         self.file_path = None
         self.options = None
+        self.auto_completes = None
 
         # child windows
         self.__stylePopup = None
@@ -365,7 +366,7 @@ class TextEditor():
         if self.__autocompPopup is None:
             x = self.root.winfo_x()
             y = self.root.winfo_y()
-            self.__autocompPopup = AutocompPopup(self,  x, y)
+            self.__autocompPopup = AutocompPopup(self,  x, y, auto_completes=self.auto_completes)
         
         self.__autocompPopup.lift()
 
@@ -380,6 +381,10 @@ class TextEditor():
             # 속성 변경
         elif type(popup) is SearchPopup:
             self.__searchPopup = None
+        elif type(popup) is AutocompPopup:
+            if options is not None:
+                self.auto_completes = options
+            self.__autocompPopup = None
 
     def setStyles(self):
         print(self.style)
@@ -398,7 +403,8 @@ class TextEditor():
         props = {
             'style': self.style,
             'options': self.options,
-            'current_dir': self.current_dir
+            'current_dir': self.current_dir,
+            'auto_completes': self.auto_completes
         }
 
         try:
@@ -426,11 +432,13 @@ class TextEditor():
         self.style = None
         self.options = None
         self.current_dir = None
+        self.auto_completes = None
 
         if properties != None:
             self.style = properties.get('style')
             self.options = properties.get('options')
             self.current_dir = properties.get('current_dir')
+            self.auto_completes = properties.get('auto_completes')
 
         if self.style is None:
             self.style = {
@@ -452,8 +460,8 @@ class TextEditor():
                 }
             }
 
-        print(self.options)
-        print("Current Directory: ", self.current_dir)
+        if self.auto_completes is None:
+            self.auto_completes = dict()
 
     def _on_change(self, event):
         self.linenumbers.redraw()
