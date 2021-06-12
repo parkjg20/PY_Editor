@@ -6,6 +6,7 @@ from tkinter import filedialog, messagebox
 from tkinter.font import Font
 from stylePopup import StylePopup
 from searchPopup import SearchPopup
+from autocompPopup import AutocompPopup
 from os import listdir, replace, sep
 from os.path import isfile, join
 import copy as copy
@@ -20,10 +21,12 @@ class TextEditor():
         self.current_dir = None
         self.file_path = None
         self.options = None
+        self.auto_completes = None
 
         # child windows
         self.__stylePopup = None
         self.__searchPopup = None
+        self.__autocompPopup = None
 
         self.set_title()
         
@@ -138,7 +141,8 @@ class TextEditor():
 
         hmenu = Menu(self.menubar, tearoff=0)
         hmenu.add_command(label="P.Y Editor", command=self.help_showabout)
-        self.menubar.add_cascade(label="Help", menu=hmenu)
+        hmenu.add_command(label="자동완성", command=self.display_autocomp_popup)
+        self.menubar.add_cascade(label="Features", menu=hmenu)
 
         self.root.config(menu=self.menubar)
         
@@ -331,6 +335,8 @@ class TextEditor():
         self.editor.bind("<Control-F>", self.display_search_popup)
         self.editor.bind("<Control-space>", self._auto_complete)
 
+        # 자동완성 팝업 단축키 추가!!!!!!!!!!!!!!!!!!!
+
         self.editor.bind("<Control-y>", self.redo)
         self.editor.bind("<Control-Y>", self.redo)
         self.editor.bind("<Control-z>", self.undo)
@@ -355,6 +361,15 @@ class TextEditor():
         
         self.__searchPopup.lift()
 
+    def display_autocomp_popup(self, event=None):
+
+        if self.__autocompPopup is None:
+            x = self.root.winfo_x()
+            y = self.root.winfo_y()
+            self.__autocompPopup = AutocompPopup(self,  x, y, auto_completes=self.auto_completes)
+        
+        self.__autocompPopup.lift()
+
 
     def on_child_popup_closed(self, popup, options=None):
         if (type(popup) is StylePopup):
@@ -366,6 +381,10 @@ class TextEditor():
             # 속성 변경
         elif type(popup) is SearchPopup:
             self.__searchPopup = None
+        elif type(popup) is AutocompPopup:
+            if options is not None:
+                self.auto_completes = options
+            self.__autocompPopup = None
 
     def setStyles(self):
         print(self.style)
@@ -384,7 +403,8 @@ class TextEditor():
         props = {
             'style': self.style,
             'options': self.options,
-            'current_dir': self.current_dir
+            'current_dir': self.current_dir,
+            'auto_completes': self.auto_completes
         }
 
         try:
@@ -412,11 +432,13 @@ class TextEditor():
         self.style = None
         self.options = None
         self.current_dir = None
+        self.auto_completes = None
 
         if properties != None:
             self.style = properties.get('style')
             self.options = properties.get('options')
             self.current_dir = properties.get('current_dir')
+            self.auto_completes = properties.get('auto_completes')
 
         if self.style is None:
             self.style = {
@@ -438,8 +460,8 @@ class TextEditor():
                 }
             }
 
-        print(self.options)
-        print("Current Directory: ", self.current_dir)
+        if self.auto_completes is None:
+            self.auto_completes = dict()
 
     #
     def _on_change(self, event):
