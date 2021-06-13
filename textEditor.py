@@ -302,12 +302,12 @@ class TextEditor():
         helpText += '17. 기능 단축키 구현\n\n'
 
         helpText += '- 유저 편의사항\n'
-        helpText += ' 1. 파일 확장자를 사용자가 지정하지 않으면 자동으로 .txt파일로 저장\n'
-        helpText += ' 2. 줄 번호 표시\n'
+        helpText += ' 1. 사용자가 파일 확장자를 지정하지 않으면 자동으로 .txt파일로 저장\n'
+        helpText += ' 2. 행 번호 표시\n'
         helpText += ' 3. Show - 파일 익스플로러 탭 활성화 상태 표시\n'
         helpText += ' 4. xscrollbar 추가\n'
         helpText += ' 5. 커서 색상과 글자 색상 동기화\n'
-        helpText += ' 6. 현재 줄 표시\n\n'
+        helpText += ' 6. 커서가 위치한 줄 강조\n\n'
 
         helpText += 'P.Y Editor Made by\n' 
         helpText += '- Park Jin Guk\n'
@@ -329,6 +329,14 @@ class TextEditor():
         self.editor.edit_redo()
 
     def bind_events(self, event=None):
+        self.editor.bind("<Control-o>", self.file_open)
+        self.editor.bind("<Control-O>", self.file_open)
+        self.editor.bind("<Control-s>", self.file_save)
+        self.editor.bind("<Control-S>", self.file_save)
+        self.editor.bind("<Control-y>", self.redo)
+        self.editor.bind("<Control-Y>", self.redo)
+        self.editor.bind("<Control-z>", self.undo)
+        self.editor.bind("<Control-Z>", self.undo)
 
         # 줄바꿈 표시를 위해 등록
         self.editor.bind("<<Change>>", self.linenumbers.redraw)
@@ -338,15 +346,9 @@ class TextEditor():
         self.editor.bind("<KeyPress>", self.linenumbers.redraw)
         # 줄바꿈 표시 등록 끝
 
-        self.editor.bind("<Control-o>", self.file_open)
-        self.editor.bind("<Control-O>", self.file_open)
-
         # 폴더 열기
         self.editor.bind("<Control-d>", self.folder_open)
         self.editor.bind("<Control-D>", self.folder_open)
-
-        self.editor.bind("<Control-s>", self.file_save)
-        self.editor.bind("<Control-S>", self.file_save)
 
         # 도움말 단축키 추가
         self.editor.bind("<F1>", self.help_showabout)
@@ -359,20 +361,14 @@ class TextEditor():
         self.editor.bind("<Control-Shift-f>", self.display_style_popup)
         self.editor.bind("<Control-Shift-F>", self.display_style_popup)
 
-        # 검색 팝업
+        # 단어 검색 팝업
         self.editor.bind("<Control-f>", self.display_search_popup)
         self.editor.bind("<Control-F>", self.display_search_popup)
         
-        self.editor.bind("<Control-f>", self.display_search_popup)
-        self.editor.bind("<Control-F>", self.display_search_popup)
-    
-        # 자동완성 등록 팝업
+        # 자동완성 활성화 키
         self.editor.bind("<Control-space>", self._auto_complete)
 
-        self.editor.bind("<Control-y>", self.redo)
-        self.editor.bind("<Control-Y>", self.redo)
-        self.editor.bind("<Control-z>", self.undo)
-        self.editor.bind("<Control-Z>", self.undo)
+        
     
     def fileExplorerToggle(self, event=None):
         self.fileExplorerEnable.set(not self.fileExplorerEnable.get())
