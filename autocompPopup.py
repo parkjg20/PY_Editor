@@ -6,7 +6,7 @@ class AutocompPopup(Popup):
     '''자동 완성 키워드 등록 팝업'''
 
     def __init__(self, parent, x=0, y=0, auto_completes=dict()):
-        Popup.__init__(self, parent, 270, 180, x, y)
+        Popup.__init__(self, parent, 280, 180, x, y)
 
         self.frame.resizable(width=False, height=False)
 
@@ -21,9 +21,9 @@ class AutocompPopup(Popup):
         lbTitle = Label(frame, text="자동완성 키워드 등록")
         lbTitle.grid(row=0, column=0, columnspan=4)
 
-        lbOriginkeyword = Label(frame, text="기본 키워드")
+        lbOriginkeyword = Label(frame, text="변경할 키워드")
         lbOriginkeyword.grid(row=1, column=0, pady=5)
-        lbTransitionkeyword = Label(frame, text="바꿔질 키워드")
+        lbTransitionkeyword = Label(frame, text="변경 후 키워드")
         lbTransitionkeyword.grid(row=2, column=0, pady=5)
 
         originKeyword = Entry(frame)
