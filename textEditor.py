@@ -145,7 +145,7 @@ class TextEditor():
 
         self.root.config(menu=self.menubar)
         
-    def changeShowTabs(self):
+    def changeShowTabs(self, event=None):
 
         self.options.get('showView')['fileExplorer'] = self.fileExplorerEnable.get()
         if(not self.fileExplorerEnable.get()):
@@ -351,6 +351,10 @@ class TextEditor():
         # 도움말 단축키 추가
         self.editor.bind("<F1>", self.help_showabout)
 
+        # File Explorer toggle
+        self.editor.bind("<Control-Shift-e>", self.fileExplorerToggle)
+        self.editor.bind("<Control-Shift-E>", self.fileExplorerToggle)
+        
         # 스타일 팝업
         self.editor.bind("<Control-Shift-f>", self.display_style_popup)
         self.editor.bind("<Control-Shift-F>", self.display_style_popup)
@@ -359,6 +363,9 @@ class TextEditor():
         self.editor.bind("<Control-f>", self.display_search_popup)
         self.editor.bind("<Control-F>", self.display_search_popup)
         
+        self.editor.bind("<Control-f>", self.display_search_popup)
+        self.editor.bind("<Control-F>", self.display_search_popup)
+    
         # 자동완성 등록 팝업
         self.editor.bind("<Control-space>", self._auto_complete)
 
@@ -367,6 +374,10 @@ class TextEditor():
         self.editor.bind("<Control-z>", self.undo)
         self.editor.bind("<Control-Z>", self.undo)
     
+    def fileExplorerToggle(self, event=None):
+        self.fileExplorerEnable.set(not self.fileExplorerEnable.get())
+        self.changeShowTabs()
+
     # StylePopup 표시
     def display_style_popup(self, event=None):
 
