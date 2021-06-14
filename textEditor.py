@@ -369,7 +369,7 @@ class TextEditor():
         self.editor.bind("<Control-space>", self._auto_complete)
 
         
-    
+    # File Explorer 토글 표시
     def fileExplorerToggle(self, event=None):
         self.fileExplorerEnable.set(not self.fileExplorerEnable.get())
         self.changeShowTabs()
