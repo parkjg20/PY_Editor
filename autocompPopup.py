@@ -53,7 +53,7 @@ class AutocompPopup(Popup):
         self.cbSet = cbSet
 
     def onDestroy(self, event=None):
-        options = self.self.__auto_completes
+        options = self.__auto_completes
         self.parent.on_child_popup_closed(self, options)
         self.frame.destroy()
 
