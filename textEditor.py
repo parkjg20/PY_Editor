@@ -29,25 +29,25 @@ class TextEditor():
         self.__autocompPopup = None
 
         self.set_title()
-        
+
         frame = Frame(self.root)
         frame2 = Frame(self.root, width=150)
-        
+
         self.frame = frame
         self.frame2 = frame2
-        
+
         frame2.pack(side="left", fill="both", expand=1)
         frame.pack(side="right", fill="both", expand=1)
 
         self.root.protocol("WM_DELETE_WINDOW", self.file_quit)
-        
+
         # draw gui는 properties 영향 X
         self.draw_gui()
         self.loadProperties()
-        
+
         # menu, showView 는 properties 영향 받음
         self.make_menu()
-        
+
         self.changeShowTabs()
         self.bind_events()
 
@@ -64,7 +64,7 @@ class TextEditor():
         # line counter
         self.linenumbers = TextLineNumbers(self.frame, width=30, relief='sunken', borderwidth=1)
         self.linenumbers.pack(side="left", fill="both", expand=1)
-        
+
         self.editor = Text(self.frame, yscrollcommand=self.yscrollbar.set, wrap="none", xscrollcommand=self.xscrollbar.set)
         self.editor.pack(side="left", fill="both", expand=1)
         self.editor.config(undo=True, width=80)
@@ -81,7 +81,7 @@ class TextEditor():
 
         for child in self.frame2.winfo_children():
             child.destroy()
-        
+
         if self.current_dir != None:
 
             onlyFiles = [f for f in listdir(self.current_dir) if isfile(join(self.current_dir, f))]
@@ -89,7 +89,7 @@ class TextEditor():
                 lb = Label(self.frame2, text=fileName)
                 realPath = join(self.current_dir, fileName).replace("\\", "/")
                 lb.bind("<Double-Button-1>", (lambda e: self.file_open(filepath=join(self.current_dir, e.widget.cget("text")).replace("\\", "/"))))
-                
+
                 if(self.file_path != None):
                     if realPath.lower() == self.file_path.lower():
                         lb.configure(bg="red")
@@ -111,7 +111,7 @@ class TextEditor():
         fmenu.add_separator()
         fmenu.add_command(label="Exit", command=self.file_quit, accelerator="Alt+F4")
         self.menubar.add_cascade(label="File", menu=fmenu)
-        
+
         emenu = Menu(self.menubar, tearoff=0)
         emenu.add_command(label="Undo", command=self.undo, accelerator="Ctrl+Z")
         emenu.add_command(label="Redo", command=self.redo, accelerator="Ctrl+Y")
@@ -120,20 +120,20 @@ class TextEditor():
         emenu.add_command(label="Copy", command=self.edit_copy, accelerator="Ctrl+C")
         emenu.add_command(label="Paste", command=self.edit_paste, accelerator="Ctrl+C")
         self.menubar.add_cascade(label="Edit", menu=emenu)
-        
+
         # 폰트 설정 메뉴 추가
         fmenu = Menu(self.menubar, tearoff=0)
         fmenu.add_command(label="글꼴", command=self.display_style_popup)
         self.menubar.add_cascade(label="Style", menu=fmenu)
 
         dmenu = Menu(self.menubar, tearoff = 0)
-        
+
         fileExplorerEnable = BooleanVar()
         fileExplorerEnable.set(True)
 
         if(self.options.get('showView').get('fileExplorer') is not None):
             fileExplorerEnable.set(self.options.get('showView').get('fileExplorer'))
-        
+
         self.fileExplorerEnable = fileExplorerEnable
         dmenu.add_checkbutton(label="File Explorer", variable=self.fileExplorerEnable, onvalue=1, offvalue=0, command=(lambda: self.changeShowTabs()))
         self.menubar.add_cascade(label="Show", menu=dmenu)
@@ -144,7 +144,7 @@ class TextEditor():
         self.menubar.add_cascade(label="Features", menu=hmenu)
 
         self.root.config(menu=self.menubar)
-        
+
     def changeShowTabs(self, event=None):
 
         self.options.get('showView')['fileExplorer'] = self.fileExplorerEnable.get()
@@ -152,7 +152,7 @@ class TextEditor():
             self.frame2.pack_forget()
         else:
             self.frame.pack_forget()
-            
+
             self.frame2.pack(side="left", fill="both", expand=1)
             self.frame.pack(side="right", fill="both", expand=1)
             self.displayFileExplorer()
@@ -162,20 +162,20 @@ class TextEditor():
         if self.editor.edit_modified():
             caption = '저장 확인'
             msg = '이 파일은 수정되었습니다. 저장하시겠습니까?'
-            
+
             # yes = True, no = False, cancel = None
             response = messagebox.askyesnocancel(caption, msg)
             if response:
                 result = self.file_save()
                 if result == 'saved':
                     return True # if it's saved succesfully
-                else: 
+                else:
                     return None # failed to save
             else:
                 return response # choose no or cancel
         else:
             return True # nothing to changes
-        
+
     def file_new(self, event=None):
         result = self.save_if_modified()
         if result != None:
@@ -185,7 +185,7 @@ class TextEditor():
             self.editor.edit_reset()
             self.file_path = None
             self.set_title()
-            
+
     def file_open(self, event=None, filepath=None):
         def readfile(filepath):
             try:
@@ -201,8 +201,8 @@ class TextEditor():
                 self.editor.edit_modified(False)
                 self.file_path = filepath
                 print('파일 읽기 완료!'.center(30, '*'))
-                
-            
+
+
         result = self.save_if_modified()
         if result != None:
             if filepath == None:
@@ -217,14 +217,13 @@ class TextEditor():
         if result != None:
             if dirPath == None:
                 dirPath = filedialog.askdirectory()
-            
-            self.current_dir = dirPath
+
             try:
-                self.displayFileExplorer()
+                if len(dirPath) == 0:
+                    self.current_dir
+                    self.displayFileExplorer()
             except FileNotFoundError as err:
                 print("폴더 열기 실패")
-                self.current_dir = None
-                self.displayFileExplorer()
 
     def file_save(self, event=None):
         if self.file_path == None:
@@ -244,7 +243,7 @@ class TextEditor():
         if len(filepath) > 0:
             if filepath.find('.') == -1:
                 filepath = filepath + '.txt'
-                
+
             try:
                 with open(filepath, 'wb') as f:
                     f.write(bytes(text, 'UTF-8'))
@@ -261,12 +260,12 @@ class TextEditor():
 
     def file_quit(self, event=None):
         '''종료 버튼이나 메뉴 Exit를 클릭하면 실행'''
-        
+
         # 스타일 설정 정보 저장
         self.saveProperties()
 
         result = self.save_if_modified()
-        
+
         if result != None:
             self.root.destroy()
 
@@ -288,7 +287,7 @@ class TextEditor():
         helpText += ' 3. 글꼴 스타일 설정\n'
         helpText += ' 4. 글씨 크기 설정\n'
         helpText += ' 5. 글꼴 색상 선택\n'
-        helpText += ' 6. 배경색 선택\n' 
+        helpText += ' 6. 배경색 선택\n'
         helpText += ' 7. 텍스트 검색\n'
         helpText += ' 8. 사용자 설정 저장 및 불러오기\n'
         helpText += ' 9. 줄간격 조정\n'
@@ -309,7 +308,7 @@ class TextEditor():
         helpText += ' 5. 커서 색상과 글자 색상 동기화\n'
         helpText += ' 6. 커서가 위치한 줄 강조\n\n'
 
-        helpText += 'P.Y Editor Made by\n' 
+        helpText += 'P.Y Editor Made by\n'
         helpText += '- Park Jin Guk\n'
         helpText += '- Yoo Seung Wan\n'
 
@@ -356,7 +355,7 @@ class TextEditor():
         # File Explorer toggle
         self.editor.bind("<Control-Shift-e>", self.fileExplorerToggle)
         self.editor.bind("<Control-Shift-E>", self.fileExplorerToggle)
-        
+
         # 스타일 팝업
         self.editor.bind("<Control-Shift-f>", self.display_style_popup)
         self.editor.bind("<Control-Shift-F>", self.display_style_popup)
@@ -364,11 +363,11 @@ class TextEditor():
         # 단어 검색 팝업
         self.editor.bind("<Control-f>", self.display_search_popup)
         self.editor.bind("<Control-F>", self.display_search_popup)
-        
+
         # 자동완성 활성화 키
         self.editor.bind("<Control-space>", self._auto_complete)
 
-        
+
     # File Explorer 토글 표시
     def fileExplorerToggle(self, event=None):
         self.fileExplorerEnable.set(not self.fileExplorerEnable.get())
@@ -381,7 +380,7 @@ class TextEditor():
             x = self.root.winfo_x()
             y = self.root.winfo_y()
             self.__stylePopup = StylePopup(self, self.style,  x, y)
-        
+
         self.__stylePopup.lift()
 
     # SearchPopup 표시
@@ -391,7 +390,7 @@ class TextEditor():
             y = self.root.winfo_y()
 
             self.__searchPopup = SearchPopup(self, x, y)
-        
+
         self.__searchPopup.lift()
 
     # AutocompPopup 표시
@@ -401,7 +400,7 @@ class TextEditor():
             x = self.root.winfo_x()
             y = self.root.winfo_y()
             self.__autocompPopup = AutocompPopup(self,  x, y, auto_completes=self.auto_completes)
-        
+
         self.__autocompPopup.lift()
 
 
@@ -411,7 +410,7 @@ class TextEditor():
             if options is not None:
                 self.style = options
                 self.setStyles()
-            
+
             self.__stylePopup = None
             # 속성 변경
         elif type(popup) is SearchPopup:
@@ -425,12 +424,12 @@ class TextEditor():
     def setStyles(self):
         print(self.style)
         fontObject = Font(
-            family = self.style.get('font'), 
+            family = self.style.get('font'),
             size = self.style.get('fontSize'),
             weight = self.style.get('fontWeight'),
             slant = self.style.get('fontStyle'),
         )
-        
+
         self.editor.configure(font=fontObject, insertbackground=self.style.get('fgColor')) # cursor색상 == font색상
         self.editor.config(fg=self.style.get('fgColor'), bg=self.style.get('bgColor'), spacing3=self.style.get('lineSpace'))
         self.linenumbers.redraw(event=None)
@@ -453,10 +452,10 @@ class TextEditor():
     # 설정 Load
     def loadProperties(self):
         properties = None
-        
+
         try:
             with open(PROP_FILE_PATH, 'r', encoding='utf8') as readfile:
-                
+
                 file = ''
                 for line in readfile:
                     file += line
@@ -517,9 +516,9 @@ class TextEditor():
     def _auto_complete(self, event=None):
         editor = self.editor
         temp = editor.index(INSERT)
-        
+
         startIndex, endIndex, word = self.__find_word(editor, temp)
-        
+
         if word in self.auto_completes.keys():
             replacedWord = self.auto_completes.get(word)
             editor.delete(startIndex, endIndex)
@@ -536,7 +535,7 @@ class TextEditor():
         while(True):
             startChar = editor.get(_startIndex).strip()
             endChar = editor.get(_endIndex).strip()
-            
+
             startCol = int(_startIndex.split('.')[1])
 
             if startChar != '' and startCol >= 0:
@@ -550,7 +549,7 @@ class TextEditor():
             if ((startChar == '' or startCol < 0)
                 and endChar == ''):
                 break
-        
+
         return _startIndex, _endIndex, word
 
     # 에디터 커서 index 증가/ 감소
