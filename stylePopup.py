@@ -15,12 +15,12 @@ class StylePopup(Popup):
         self.frame.resizable(width=False, height=False)
 
         TITLE = "스타일 설정, P.Y Editor 1.0"
-        
+
         self.frame.title(TITLE)
-        
+
         print(style)
         self.createGUI(self.frame, style)
-    
+
     def createGUI(self, frame, style):
         # create child framedow
         lbFont = Label(frame, text='글꼴', width=10)
@@ -34,7 +34,7 @@ class StylePopup(Popup):
         lbBgColor = Label(frame, text='배경 색상')
         inBgColorSelected = Entry(frame, width=9)
         inBgColorSelected.insert(0, style.get('bgColor'))
-        
+
         lbFont.grid(row=0, column=0)
         lbFontStyle.grid(row=1, column=0)
         lbFontWeight.grid(row=2, column=0)
@@ -99,7 +99,7 @@ class StylePopup(Popup):
 
         cbLineSpace = ttk.Combobox(frame, values=lineSpaceList, width=15)
         cbLineSpace.current(currentLineSpace)
-        
+
         # 색상표 호출
         fgColorBtn = Button(frame, text = "색상 선택", command = self.chooseFgColor)
         bgColorBtn = Button(frame, text = "색상 선택", command = self.chooseBgColor)
@@ -127,7 +127,7 @@ class StylePopup(Popup):
         trueBtn.grid(row=0, column=0)
         falseBtn.grid(row=0, column=1)
         btnFrame.grid(row=7, column=0, columnspan=3, pady=8)
-        
+
     def onApply(self, event=None):
         print("Destroy", self)
         options = dict({

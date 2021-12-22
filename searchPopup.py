@@ -12,14 +12,14 @@ class SearchPopup(Popup):
         self.frame.resizable(width=False, height=False)
 
         TITLE = "검색, P.Y Editor 1.0"
-        
+
         self.frame.title(TITLE)
-        
+
         self.createGUI(self.frame)
-    
+
     def createGUI(self, frame):
         self.lbKeyword = Label(frame, text='검색할 단어 입력')
-        
+
         self.inKeyword = Entry(frame)
 
         self.btnSearch = Button(frame, text="검색", command=self.onApply)
@@ -29,12 +29,11 @@ class SearchPopup(Popup):
         self.btnSearch.grid(row=0, column=2, padx=5, pady=5)
 
         self.inKeyword.focus()
-        
+
     def onCancel(self, event=None):
         self.parent.editor.tag_remove('search_keyword', 1.0, "end")
-        
+
         Popup.onCancel(self, event)
-        
 
     def onApply(self, event=None):
         countVar = IntVar()

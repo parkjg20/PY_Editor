@@ -74,7 +74,7 @@ class AutocompPopup(Popup):
             messagebox.showinfo('알림', '키워드를 입력해주세요.')
             self.lift()
             return
-        
+
         transitionEntry=self.transitionKeyword.get().strip()
         if transitionEntry == '':
             messagebox.showinfo('알림', '변경될 텍스트를 입력해주세요.')
